@@ -39,7 +39,8 @@ create_cluster() {
 
   # Wait for provisioner ready
   echo "[+] Waiting for local-path-provisioner ready on $name"
-  KUBECONFIG="$KUBECONFIG_DIR/$name.yaml" kubectl -n local-path-storage rollout status deploy/local-path-provisioner --timeout=90s
+  # Tolerate re-runs: if already available or rollout times out, do not fail
+  KUBECONFIG="$KUBECONFIG_DIR/$name.yaml" kubectl -n local-path-storage rollout status deploy/local-path-provisioner --timeout=90s || true
 
   # Set default StorageClass
   echo "[+] Setting 'standard' as default StorageClass on $name"
