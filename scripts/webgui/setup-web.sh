@@ -84,7 +84,7 @@ server {
     auth_basic "CKA Practice";
     auth_basic_user_file $HTPASSWD;
     proxy_http_version 1.1;
-    proxy_pass http://127.0.0.1:5005/;
+    proxy_pass http://127.0.0.1:5005/api/;
   }
 
   # Root of base path -> session page
