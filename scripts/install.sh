@@ -40,22 +40,24 @@ if ! command -v docker >/dev/null 2>&1; then
   sudo usermod -aG docker "$USER" || true
 fi
 
-# kubectl (prefer Kubernetes apt repo → snap → validated curl)
+# kubectl (prefer snap → Kubernetes apt repo → validated curl)
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "[install] Installing kubectl"
-  # Add Kubernetes apt repo
-  sudo install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
-  sudo chmod a+r /etc/apt/keyrings/kubernetes-archive-keyring.gpg || true
-  echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | \
-    sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
-  if sudo apt update && sudo apt install -y kubectl; then
-    echo "[install] kubectl installed via apt"
-  else
-    echo "[install] apt kubectl failed; trying snap"
-    if command -v snap >/dev/null 2>&1; then
-      sudo snap install kubectl --classic || echo "[install] snap kubectl failed"
-    fi
+  # Snap first (most reliable on Ubuntu)
+  if command -v snap >/dev/null 2>&1; then
+    sudo snap install kubectl --classic || echo "[install] snap kubectl failed"
+  fi
+  # Kubernetes apt repo next
+  if ! command -v kubectl >/dev/null 2>&1; then
+    # Remove any stale google 'packages.cloud.google.com/apt kubernetes-xenial' entries that 404
+    sudo grep -rl "packages.cloud.google.com/apt" /etc/apt/sources.list.d 2>/dev/null | xargs -r sudo rm -f
+    sudo install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+    sudo chmod a+r /etc/apt/keyrings/kubernetes-archive-keyring.gpg || true
+    echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | \
+      sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
+    sudo apt update || true
+    sudo apt install -y kubectl || echo "[install] apt kubectl failed"
   fi
   # Validated curl fallback if still not present
   if ! command -v kubectl >/dev/null 2>&1; then
@@ -125,20 +127,20 @@ if [ ! -d "/home/cka/cka-practice-rig" ]; then
 fi
 
 # Configure web GUI (ttyd + nginx)
-"$(dirname "$0")/webgui/setup-web.sh"
+bash "$(dirname "$0")/webgui/setup-web.sh"
 
 # Enable docs-only desktop and web desktop by default
-"$(dirname "$0")/webgui/setup-docs-proxy.sh" || true
-"$(dirname "$0")/webgui/setup-desktop.sh" || true
+bash "$(dirname "$0")/webgui/setup-docs-proxy.sh" || true
+bash "$(dirname "$0")/webgui/setup-desktop.sh" || true
 
 # Create clusters and merge kubeconfigs
-"$(dirname "$0")/setup.sh"
+bash "$(dirname "$0")/setup.sh"
 
 IP=$(hostname -I | awk '{print $1}')
 read -r -p "Enter domain for HTTPS (optional): " DOMAIN || DOMAIN=""
 if [ -n "$DOMAIN" ]; then
   echo "[install] Configuring TLS for $DOMAIN"
-  "$(dirname "$0")/webgui/setup-ssl.sh" "$DOMAIN" || echo "[install] TLS setup failed; continuing with HTTP"
+  bash "$(dirname "$0")/webgui/setup-ssl.sh" "$DOMAIN" || echo "[install] TLS setup failed; continuing with HTTP"
   BASE_URL="https://$DOMAIN/cka-training"
 else
   BASE_URL="http://$IP/cka-training"
