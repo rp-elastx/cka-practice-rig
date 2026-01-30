@@ -16,14 +16,24 @@ sudo apt install -y ca-certificates curl gnupg jq python3 python3-pip python3-fl
 # Docker Engine
 if ! command -v docker >/dev/null 2>&1; then
   echo "[install] Installing Docker Engine"
+  # Ensure keyring dir exists and key is readable
   sudo install -m 0755 -d /etc/apt/keyrings
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-  echo \
-"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-$(. /etc/os-release && echo $VERSION_CODENAME) stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt update
-  sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  sudo chmod a+r /etc/apt/keyrings/docker.gpg || true
+  # Add repo for current codename (jammy/noble)
+  CODENAME=$(. /etc/os-release && echo "$VERSION_CODENAME")
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $CODENAME stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  # Try to update and install Docker CE; fall back to docker.io if repo fails
+  if ! sudo apt update; then
+    echo "[install] Docker repo update failed; falling back to ubuntu docker.io"
+    sudo apt install -y docker.io || echo "[install] Failed to install docker.io"
+  else
+    if ! sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; then
+      echo "[install] Docker CE install failed; falling back to ubuntu docker.io"
+      sudo apt install -y docker.io || echo "[install] Failed to install docker.io"
+    fi
+  fi
   sudo usermod -aG docker "$USER" || true
 fi
 
@@ -59,6 +69,13 @@ if ! command -v ttyd >/dev/null 2>&1; then
   sudo apt install -y ttyd || {
     echo "[install] ttyd apt install failed; please install manually or via snap"
   }
+fi
+
+# Fix hostname resolution for sudo if missing in /etc/hosts
+HOSTNAME_CURRENT=$(hostname)
+if ! grep -q "\b$HOSTNAME_CURRENT\b" /etc/hosts; then
+  echo "[install] Adding hostname '$HOSTNAME_CURRENT' to /etc/hosts for sudo resolution"
+  echo "127.0.1.1 $HOSTNAME_CURRENT" | sudo tee -a /etc/hosts >/dev/null || true
 fi
 
 # Create sandbox user 'cka'

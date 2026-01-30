@@ -10,7 +10,7 @@ Self-hosted CKA practice platform with kind-based multi-cluster, randomized chal
 - Resettable environment via web controls or script
 
 ## Prerequisites
-- Ubuntu 24.04 (recommended) with Bash. The installer will install Docker, kind, kubectl, Python 3, nginx, Squid, ttyd, and Helm.
+- Ubuntu 22.04 or 24.04 (recommended) with Bash. The installer will install Docker, kind, kubectl, Python 3, nginx, Squid, ttyd, and Helm.
 
 ## Quickstart
 ```bash
