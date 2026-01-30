@@ -44,7 +44,11 @@ chal_setup_rel=$(get_yaml "$chal_file" setup)
 chal_grade_rel=$(get_yaml "$chal_file" grade)
 chal_limit=$(get_yaml "$chal_file" timeLimitSeconds)
 chal_desc=$(get_yaml "$chal_file" description)
-chal_setup=$(realpath -m "$CHAL_DIR/$(basename "$chal_setup_rel")" 2>/dev/null || realpath -m "$REPO_DIR/scripts/challenges/$(basename "$chal_setup_rel")")
+if [ -f "$CHAL_DIR/$(basename "$chal_setup_rel")" ]; then
+  chal_setup=$(realpath -m "$CHAL_DIR/$(basename "$chal_setup_rel")")
+else
+  chal_setup=$(realpath -m "$REPO_DIR/scripts/challenges/$(basename "$chal_setup_rel")")
+fi
 chal_grade=$(realpath -m "$REPO_DIR/grading/$(basename "$chal_grade_rel")")
 
 # Pick random context

@@ -1,5 +1,5 @@
 id: 01-scale-a-deployment-with-hpa-min-1-pod-max-4-set-target-cpu-usage-to-50-and-stabilization-window-to-30s
-title: Scale an existing Deployment with HPA: min=1, max=4, target CPU=50%, scaleDown stabilization=30s.
+title: "Scale an existing Deployment with HPA: min=1, max=4, target CPU=50%, scaleDown stabilization=30s."
 category: deployment
 namespace: deploy-chal
 timeLimitSeconds: 900
