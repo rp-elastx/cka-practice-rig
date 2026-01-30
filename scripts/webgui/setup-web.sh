@@ -64,7 +64,7 @@ server {
     auth_basic "CKA Practice";
     auth_basic_user_file $HTPASSWD;
     proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
     proxy_pass http://127.0.0.1:3000/;
   }
@@ -74,7 +74,7 @@ server {
     auth_basic "CKA Practice";
     auth_basic_user_file $HTPASSWD;
     proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
     proxy_pass http://127.0.0.1:7681/;
   }
