@@ -80,11 +80,24 @@ chal_setup_rel=$(get_yaml "$chal_file" setup)
 chal_grade_rel=$(get_yaml "$chal_file" grade)
 chal_limit=$(get_yaml "$chal_file" timeLimitSeconds)
 chal_desc=$(get_yaml "$chal_file" description)
-if [ -f "$CHAL_DIR/$(basename "$chal_setup_rel")" ]; then
-  chal_setup=$(realpath -m "$CHAL_DIR/$(basename "$chal_setup_rel")")
-else
-  chal_setup=$(realpath -m "$REPO_DIR/scripts/challenges/$(basename "$chal_setup_rel")")
-fi
+resolve_script() {
+  local rel="$1"
+  local base
+  base=$(basename "$rel")
+  local cand1="$CHAL_DIR/$base"
+  local cand2="$REPO_DIR/scripts/challenges/$base"
+  if [ -f "$cand1" ]; then
+    echo "$(realpath -m "$cand1")"
+    return 0
+  fi
+  if [ -f "$cand2" ]; then
+    echo "$(realpath -m "$cand2")"
+    return 0
+  fi
+  echo "Error: setup script not found: $base" >&2
+  exit 127
+}
+chal_setup=$(resolve_script "$chal_setup_rel")
 chal_grade=$(realpath -m "$REPO_DIR/grading/$(basename "$chal_grade_rel")")
 
 # Random context
