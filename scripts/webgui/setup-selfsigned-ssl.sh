@@ -38,3 +38,11 @@ sudo systemctl restart nginx
 IP=$(hostname -I | awk '{print $1}')
 BASE_PATH="/cka-training"
 echo "[ssl] Self-signed HTTPS enabled. Access: https://$IP$BASE_PATH/desktop (you may need to accept the cert)."
+
+# Ensure HTTP redirects to HTTPS for the site so UI buttons work consistently
+if ! grep -q "if (\$scheme = http)" "$SITE_CONF"; then
+  echo "[ssl] Adding http→https redirect rule"
+  sudo sed -i "/server_name /a \
+\  if (\$scheme = http) { return 301 https://\$host\$request_uri; }" "$SITE_CONF"
+  sudo nginx -t && sudo systemctl restart nginx
+fi
