@@ -46,7 +46,7 @@ via off
 forwarded_for off
 EOF
 
-sudo systemctl restart squid
+sudo systemctl restart squid || true
 
 # Show status
 sudo systemctl --no-pager status squid || true
