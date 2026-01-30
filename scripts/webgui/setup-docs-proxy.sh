@@ -21,7 +21,7 @@ sudo tee "$SQUID_CONF" >/dev/null <<'EOF'
 http_port 3128
 
 # ACLs for allowed destinations
-acl allowed_sites dstdomain .kubernetes.io docs.kubernetes.io kubernetes.io
+acl allowed_sites dstdomain kubernetes.io docs.kubernetes.io
 
 # SSL bump/SNI is complex; keep simple and rely on CONNECT with dstdomain ACL
 acl SSL_ports port 443
