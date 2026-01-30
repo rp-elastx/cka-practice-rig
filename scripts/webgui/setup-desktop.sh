@@ -45,7 +45,7 @@ docker run -d \
   -e NO_PROXY=localhost,127.0.0.1,$HOST_IP \
   -p 3000:3000 \
   --restart unless-stopped \
-  -v "$REPO_DIR/kubeconfigs:/config/.kube:ro" \
+  $( [ -f "$DST_KCFG" ] && echo -v "$DST_KCFG:/config/.kube/config:ro" ) \
   $( [ -n "$KUBECTL_BIN" ] && echo -v "$KUBECTL_BIN:/usr/local/bin/kubectl:ro" ) \
   lscr.io/linuxserver/webtop:latest
 
@@ -54,4 +54,6 @@ bash "$(dirname "$0")/setup-web.sh"
 
 BASE_PATH="/cka-training"
 echo "[desktop] Web desktop available at http://$(hostname -I | awk '{print $1}')$BASE_PATH/desktop (auth: cka/cka)."
-echo "[desktop] Inside desktop, kubectl will use kubeconfig at /config/.kube/merged-desktop.yaml (mounted from host)."
+if [ -f "$DST_KCFG" ]; then
+  echo "[desktop] Inside desktop, kubectl will use kubeconfig at /config/.kube/config (mounted from host)."
+fi
