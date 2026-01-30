@@ -27,7 +27,8 @@ fi
 # Inject HTTPS listen and cert paths into site config if not present
 if ! grep -q "listen 443 ssl" "$SITE_CONF"; then
   echo "[ssl] Enabling HTTPS in nginx site config"
-  sudo sed -i "s/^\s*listen 80;$/  listen 80;\n  listen 443 ssl;\n  ssl_certificate $CERT_PATH;\n  ssl_certificate_key $KEY_PATH;/" "$SITE_CONF"
+  sudo sed -i "/listen 80;/a \
+\  listen 443 ssl;\n\  ssl_certificate $CERT_PATH;\n\  ssl_certificate_key $KEY_PATH;" "$SITE_CONF"
 fi
 
 # Test and restart nginx
