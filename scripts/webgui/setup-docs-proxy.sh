@@ -2,8 +2,13 @@
 set -euo pipefail
 # Install and configure a restrictive HTTP(S) proxy to allow only Kubernetes docs domains
 
-sudo apt update
-sudo apt install -y squid
+# Disable stale Kubernetes apt source if present to avoid update failures
+if [ -f "/etc/apt/sources.list.d/kubernetes.list" ]; then
+	sudo mv /etc/apt/sources.list.d/kubernetes.list /etc/apt/sources.list.d/kubernetes.list.disabled || true
+fi
+
+sudo apt-get update -y
+sudo apt-get install -y squid
 
 SQUID_CONF="/etc/squid/squid.conf"
 
