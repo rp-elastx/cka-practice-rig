@@ -13,7 +13,7 @@ if ! command -v lsb_release >/dev/null 2>&1; then
   echo "[install] lsb_release not found; ensure Ubuntu 24.04 environment"
 fi
 
-sudo apt update
+sudo apt update || true
 sudo apt install -y ca-certificates curl gnupg jq python3 python3-pip python3-flask nginx apache2-utils
 
 # Docker Engine
@@ -43,6 +43,11 @@ fi
 # kubectl (prefer snap → Kubernetes apt repo → validated curl)
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "[install] Installing kubectl"
+  # Ensure snapd available for preferred install path
+  if ! command -v snap >/dev/null 2>&1; then
+    sudo apt update || true
+    sudo apt install -y snapd || true
+  fi
   # Snap first (most reliable on Ubuntu)
   if command -v snap >/dev/null 2>&1; then
     sudo snap install kubectl --classic || echo "[install] snap kubectl failed"
@@ -50,7 +55,8 @@ if ! command -v kubectl >/dev/null 2>&1; then
   # Kubernetes apt repo next
   if ! command -v kubectl >/dev/null 2>&1; then
     # Remove any stale google 'packages.cloud.google.com/apt kubernetes-xenial' entries that 404
-    sudo grep -rl "packages.cloud.google.com/apt" /etc/apt/sources.list.d 2>/dev/null | xargs -r sudo rm -f
+    sudo grep -rl "packages.cloud.google.com/apt" /etc/apt/sources.list.d 2>/dev/null | xargs -r sudo rm -f || true
+    sudo sed -i.bak '/packages\.cloud\.google\.com\/apt/d' /etc/apt/sources.list || true
     sudo install -m 0755 -d /etc/apt/keyrings
     curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
     sudo chmod a+r /etc/apt/keyrings/kubernetes-archive-keyring.gpg || true
