@@ -1,59 +1,9 @@
 id: 11-troubleshoot-cluster-after-external-etcd-to-kubeadm-migration_Version2
 title: Troubleshoot broken control plane after migrating to external etcd (kubeadm).
 category: troubleshooting
-namespace: 11-troubleshoot-cluster-after-external-etcd-to-kubeadm-migration-version2
+namespace: troubleshoot-chal
 timeLimitSeconds: 1200
 setup: ../scripts/challenges/setup-troubleshooting.sh
 grade: ../grading/grade-troubleshooting.sh
 description: |
-  Task: Troubleshoot broken control plane after migrating to external etcd (kubeadm).
-  
-  Checklist:
-  
-  1) Verify kube-apiserver static pod manifest
-  sudo grep -E -- '--etcd-servers|--etcd-cafile|--etcd-certfile|--etcd-keyfile' /etc/kubernetes/manifests/kube-apiserver.yaml
-  # Ensure endpoints https://<etcd-ip>:2379 are correct and cert paths exist.
-  
-  2) Check apiserver logs and health
-  sudo crictl ps | grep kube-apiserver
-  sudo crictl logs <apiserver-container-id> 2>&1 | tail -n 100
-  curl -k https://127.0.0.1:6443/healthz
-  
-  3) Validate etcd connectivity from control plane node
-  export ETCDCTL_API=3
-  # Adjust endpoints and certs to your external etcd:
-  ETCD_EP=https://<etcd-ip>:2379
-  CA=/etc/kubernetes/pki/etcd/ca.crt
-  CERT=/etc/kubernetes/pki/apiserver-etcd-client.crt
-  KEY=/etc/kubernetes/pki/apiserver-etcd-client.key
-  etcdctl --endpoints=$ETCD_EP --cacert=$CA --cert=$CERT --key=$KEY endpoint health
-  etcdctl --endpoints=$ETCD_EP --cacert=$CA --cert=$CERT --key=$KEY member list
-  
-  4) Confirm kubeadm ClusterConfiguration matches external etcd
-  sudo kubeadm config view | sed -n '/etcd:/,/imageRepository:/p'
-  # Should show external: endpoints: [...] and certs for apiserver-etcd-client.
-  
-  5) Certificates sanity
-  sudo ls -l /etc/kubernetes/pki/apiserver-etcd-client.{crt,key}
-  sudo openssl x509 -in /etc/kubernetes/pki/apiserver-etcd-client.crt -noout -text | grep -E 'Subject:|X509v3 Key Usage|Extended Key Usage|DNS|IP'
-  # Ensure client cert is signed by etcd CA and not expired.
-  
-  6) Static pod rotation
-  # Any edit to manifests under /etc/kubernetes/manifests/ triggers kubelet to restart components
-  sudo ls -l /etc/kubernetes/manifests/
-  # After fixes, kubelet should recreate apiserver, controller-manager, scheduler pods.
-  
-  7) Controller-manager/scheduler health
-  kubectl get pods -n kube-system -l tier=control-plane
-  kubectl logs -n kube-system -l component=kube-controller-manager --tail=100
-  kubectl logs -n kube-system -l component=kube-scheduler --tail=100
-  
-  8) Node/kubelet status
-  systemctl status kubelet
-  journalctl -u kubelet -e --no-pager
-  
-  Common fixes:
-  - Wrong etcd endpoints or port (2379).
-  - Missing/invalid apiserver etcd client certs. Regenerate via kubeadm if needed:
-    sudo kubeadm init phase certs apiserver-etcd-client
-  - Network/firewall blocking control plane -> etcd.
+  Diagnose and repair a broken control plane after migration to external etcd. Validate apiserver flags for etcd endpoints and client certs, check component health and logs, verify etcd connectivity and kubeadm configuration, fix certificates or endpoints, and restore control plane to healthy state.

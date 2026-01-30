@@ -1,29 +1,9 @@
 id: 04-create-pod-and-service-from-description_Version2
 title: Create a Pod and a Service from a textual description.
 category: service
-namespace: 04-create-pod-and-service-from-description-version2
+namespace: service-chal
 timeLimitSeconds: 900
 setup: ../scripts/challenges/setup-service.sh
 grade: ../grading/grade-service.sh
 description: |
-  Task: Create a Pod and a Service from a textual description.
-  
-  Steps:
-  
-  1) Scaffold Pod YAML from description (edit fields to match)
-  # Example vars (adjust):
-  APP=myapp
-  IMAGE=nginx:1.25
-  PORT=80
-  kubectl run $APP --image=$IMAGE --port=$PORT --restart=Never --dry-run=client -o yaml > pod.yaml
-  # Edit pod.yaml to match CPU/memory, env, volumes, labels, etc.
-  kubectl apply -f pod.yaml
-  
-  2) Expose Pod as a Service (ClusterIP unless specified otherwise)
-  kubectl expose pod/$APP --port=$PORT --target-port=$PORT --name=${APP} --dry-run=client -o yaml > svc.yaml
-  # Edit svc.yaml to set type (ClusterIP/NodePort/LoadBalancer), selector, ports, annotations as needed
-  kubectl apply -f svc.yaml
-  
-  3) Verify
-  kubectl get pod,svc -o wide
-  kubectl describe svc $APP
+  In namespace 'service-chal', create a pod 'echo' exposing HTTP on port 8080 and a ClusterIP service 'echo-svc' that targets the pod. Confirm the service has ready endpoints.

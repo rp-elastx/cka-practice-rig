@@ -77,7 +77,7 @@ fi
 # Configure web GUI (ttyd + nginx)
 "$(dirname "$0")/webgui/setup-web.sh"
 
-# Optional docs-only desktop and web desktop
+# Enable docs-only desktop and web desktop by default
 "$(dirname "$0")/webgui/setup-docs-proxy.sh" || true
 "$(dirname "$0")/webgui/setup-desktop.sh" || true
 

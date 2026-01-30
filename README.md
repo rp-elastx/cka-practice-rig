@@ -4,27 +4,28 @@ Self-hosted CKA practice platform with kind-based multi-cluster, randomized chal
 
 ## Features
 - Multiple kind clusters and merged kubeconfig with distinct contexts
-- 6 ready-made challenges: storage, deployment, service, network policy, RBAC, troubleshooting
-- Randomized target context per challenge
-- Time limit tracking and pass/fail grading
-- Resettable environment and simple scoreboard (JSON + HTML)
+- Ready‑made baseline challenges (6) plus imported challenge specs (15) mapped to categories
+- Randomized target context per challenge with per‑challenge and session timers
+- Automated grading with a simple scoreboard (JSON + HTML)
+- Resettable environment via web controls or script
 
 ## Prerequisites
-- Linux/macOS, Bash
-- kind, kubectl, Python 3
+- Ubuntu 24.04 (recommended) with Bash. The installer will install Docker, kind, kubectl, Python 3, nginx, Squid, ttyd, and Helm.
 
 ## Quickstart
 ```bash
-# Install dependencies, web GUI, and clusters
+# 1) Install everything: web GUI (desktop + terminal + docs proxy) and clusters
 bash scripts/install.sh
 
-# Optional: set up docs-only desktop
-bash scripts/webgui/setup-docs-proxy.sh
-bash scripts/webgui/setup-desktop.sh
-
-# Set cka password (change from default)
+# 2) Change passwords (recommended)
+# Web auth (nginx basic auth for /cka-training)
+sudo htpasswd /etc/nginx/htpasswd-cka cka
+sudo systemctl reload nginx
+# System user 'cka' (used by ttyd and services)
 sudo passwd cka
 ```
+
+During install, you can optionally enter a domain to enable HTTPS via certbot. If provided, the installer prints final access URLs with https.
 
 ## Notes
 - Use the printed context (`kubectl config current-context`) for each session.
@@ -32,20 +33,23 @@ sudo passwd cka
 - Submissions after the time limit are marked but do not block grading.
 
 ## Access
-- Desktop + terminal + docs: http(s)://<server-ip-or-domain>/cka-training/desktop
+- Desktop (docs-only): http(s)://<server-ip-or-domain>/cka-training/desktop
+- Terminal (ttyd): http(s)://<server-ip-or-domain>/cka-training/terminal
 - Live session page: http(s)://<server-ip-or-domain>/cka-training/session.html
 - Scoreboard: http(s)://<server-ip-or-domain>/cka-training/scoreboard/
-Auth: user `cka`, password `cka` (change after install).
+Auth: user `cka`, password `cka` (nginx basic auth; change after install).
 
 ## Web GUI
-- Single desktop environment with terminal and browser (via webtop) under `/cka-training/desktop`.
-- Squid proxy optionally restricts browsing to Kubernetes docs domains.
-- Control API enables starting a session and reset actions via web.
+- Desktop environment with browser (via webtop) at `/cka-training/desktop`, locked to Kubernetes docs via local Squid proxy.
+- Separate web terminal (ttyd) at `/cka-training/terminal`.
+- Control API enables starting a session, grading (Done), moving to Next challenge, and reset actions via web.
+
+Start a timed multi‑challenge session from the session page; progress and timers update live. Results sync to the scoreboard automatically.
 
 ## TLS and Domain
-To serve on your domain (e.g., vanskapt.se) with HTTPS:
+The installer prompts for an optional domain and, if provided, configures HTTPS via certbot automatically. Ensure your DNS A/AAAA record points to the server and port 80 is reachable.
+
+You can also run manually:
 ```bash
-# Set server_name and obtain certificates
-bash scripts/webgui/setup-ssl.sh vanskapt.se
+bash scripts/webgui/setup-ssl.sh your.domain
 ```
-Ensure DNS A/AAAA record points to the server and port 80 is reachable before running the script.

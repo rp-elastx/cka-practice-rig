@@ -30,7 +30,7 @@ fi
 
 sudo systemctl enable --now ttyd@cka
 
-# Nginx: serve scoreboard and proxy /terminal to ttyd
+# Nginx: serve scoreboard and proxy desktop/terminal + API under base path
 sudo mkdir -p "$WWW_DIR"
 sudo rsync -a "$SCORE_DIR/" "$WWW_DIR/scoreboard/"
 
@@ -67,6 +67,16 @@ server {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
     proxy_pass http://127.0.0.1:3000/;
+  }
+
+  # Web terminal (ttyd)
+  location $BASE_PATH/terminal/ {
+    auth_basic "CKA Practice";
+    auth_basic_user_file $HTPASSWD;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_pass http://127.0.0.1:7681/;
   }
 
   # Control API proxy
@@ -143,4 +153,4 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now cka-control.service
 
 echo "[webgui] Nginx configured. Access: http://$(hostname -I | awk '{print $1}')$BASE_PATH"
-echo "[webgui] Desktop: $BASE_PATH/desktop, Scoreboard: $BASE_PATH/scoreboard"
+echo "[webgui] Desktop: $BASE_PATH/desktop, Terminal: $BASE_PATH/terminal, Scoreboard: $BASE_PATH/scoreboard"

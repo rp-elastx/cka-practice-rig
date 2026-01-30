@@ -1,32 +1,9 @@
 id: 15-list-cert-manager-crds-and-api-descriptions_Version2
 title: List CRDs installed by cert-manager and get API descriptions.
 category: certmanager
-namespace: 15-list-cert-manager-crds-and-api-descriptions-version2
+namespace: cert-chal
 timeLimitSeconds: 600
 setup: ../scripts/challenges/setup-certmanager.sh
 grade: ../grading/grade-certmanager.sh
 description: |
-  Task: List CRDs installed by cert-manager and get API descriptions.
-  
-  Steps:
-  
-  1) List cert-manager API resources (preferred)
-  kubectl api-resources --api-group=cert-manager.io -o wide
-  
-  2) List CRDs installed (all groups)
-  kubectl get crd | grep -E 'cert-manager.io|acme.cert-manager.io'
-  
-  3) Get schema/help for specific CRDs
-  kubectl explain certificates.cert-manager.io
-  kubectl explain issuers.cert-manager.io
-  kubectl explain clusterissuers.cert-manager.io
-  kubectl explain certificaterequests.cert-manager.io
-  kubectl explain challenges.acme.cert-manager.io
-  kubectl explain orders.acme.cert-manager.io
-  
-  4) Explore fields recursively (show top-level first to avoid huge output)
-  kubectl explain certificates.cert-manager.io.spec
-  kubectl explain certificates.cert-manager.io.spec --recursive | less
-  
-  5) Check versions served/stored
-  kubectl get crd certificates.cert-manager.io -o jsonpath='{.spec.versions[*].name}{"\n"}'
+  List CRDs provided by cert-manager (including acme.*) and obtain API descriptions for key kinds (Certificate, Issuer, ClusterIssuer, CertificateRequest, Challenge, Order). Summarize versions served and essential fields.

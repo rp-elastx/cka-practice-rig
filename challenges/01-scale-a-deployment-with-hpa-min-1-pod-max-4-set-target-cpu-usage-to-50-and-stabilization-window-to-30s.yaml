@@ -1,61 +1,9 @@
 id: 01-scale-a-deployment-with-hpa-min-1-pod-max-4-set-target-cpu-usage-to-50-and-stabilization-window-to-30s
 title: Scale an existing Deployment with HPA: min=1, max=4, target CPU=50%, scaleDown stabilization=30s.
 category: deployment
-namespace: 01-scale-a-deployment-with-hpa-min-1-pod-max-4-set-target-cpu-usage-to-50-and-stabilization-window-to-30s
+namespace: deploy-chal
 timeLimitSeconds: 900
 setup: ../scripts/challenges/setup-deployment.sh
 grade: ../grading/grade-deployment.sh
 description: |
-  Task: Scale an existing Deployment with HPA: min=1, max=4, target CPU=50%, scaleDown stabilization=30s.
-  
-  Steps (exam‑optimized, minimal text):
-  
-  1) Identify the target Deployment/namespace
-  # If not given, find it:
-  kubectl get deploy -A
-  # Set variables (adjust as needed):
-  NS=default
-  DEPLOY=<deployment-name>
-  
-  2) Ensure CPU requests exist (required for Utilization)
-  # For all containers in the Deployment (adjust value if needed):
-  kubectl set resources deploy/$DEPLOY -n $NS --requests=cpu=200m
-  
-  3) Create HPA (min=1, max=4, 50% CPU)
-  kubectl autoscale deploy $DEPLOY -n $NS --min=1 --max=4 --cpu-percent=50
-  
-  4) Add 30s scaleDown stabilization
-  kubectl patch hpa $DEPLOY -n $NS --type=merge -p '{"spec":{"behavior":{"scaleDown":{"stabilizationWindowSeconds":30}}}}'
-  
-  5) Verify
-  kubectl get hpa -n $NS
-  kubectl describe hpa $DEPLOY -n $NS
-  
-  Notes:
-  - If the Deployment has multiple containers and you must set per-container requests, use: -c <container-name>.
-  - If autoscale isn’t available or you prefer YAML, apply directly:
-  
-  cat <<EOF | kubectl apply -f -
-  apiVersion: autoscaling/v2
-  kind: HorizontalPodAutoscaler
-  metadata:
-    name: $DEPLOY
-    namespace: $NS
-  spec:
-    scaleTargetRef:
-      apiVersion: apps/v1
-      kind: Deployment
-      name: $DEPLOY
-    minReplicas: 1
-    maxReplicas: 4
-    metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 50
-    behavior:
-      scaleDown:
-        stabilizationWindowSeconds: 30
-  EOF
+  In namespace 'deploy-chal', configure HPA for the existing Deployment 'web' with minReplicas=1, maxReplicas=4, target CPU utilization=50%, and a scaleDown stabilization window of 30 seconds. Ensure containers have CPU requests so utilization can be computed.

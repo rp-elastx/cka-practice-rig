@@ -1,44 +1,9 @@
 id: 05-add-sidecars-to-pod-and-share-data-between-containers_Version2
 title: Add sidecar containers to a Pod and share data between all containers.
 category: deployment
-namespace: 05-add-sidecars-to-pod-and-share-data-between-containers-version2
+namespace: deploy-chal
 timeLimitSeconds: 900
 setup: ../scripts/challenges/setup-deployment.sh
 grade: ../grading/grade-deployment.sh
 description: |
-  Task: Add sidecar containers to a Pod and share data between all containers.
-  
-  Steps:
-  
-  1) Add a shared emptyDir volume and mount it in all containers
-  # Strategic merge patch example for a Deployment named web
-  cat <<'EOF' | kubectl patch deploy web --type=strategic -p "$(cat)"
-  spec:
-    template:
-      spec:
-        volumes:
-        - name: shared
-          emptyDir: {}
-        containers:
-        - name: main
-          volumeMounts:
-          - name: shared
-            mountPath: /shared
-        - name: sidecar-logs
-          image: busybox:1.36
-          command: ["sh","-c","tail -F /shared/app.log"]
-          volumeMounts:
-          - name: shared
-            mountPath: /shared
-        - name: sidecar-metrics
-          image: busybox:1.36
-          command: ["sh","-c","while true; do wc -l /shared/app.log || true; sleep 5; done"]
-          volumeMounts:
-          - name: shared
-            mountPath: /shared
-  EOF
-  
-  2) Verify mounts and containers
-  kubectl get pods -l app=web
-  kubectl describe pod -l app=web | sed -n '/Containers:/,/Volumes:/p'
-  kubectl exec deploy/web -c sidecar-logs -- sh -c 'ls -l /shared'
+  In namespace 'deploy-chal', add two sidecars to Deployment 'web' and share data across all containers using an emptyDir volume mounted at /shared. Verify that all containers can read/write to /shared.

@@ -33,4 +33,5 @@ fi
 # Update nginx site to proxy /desktop (script will re-create and restart nginx)
 "$(dirname "$0")/setup-web.sh"
 
-echo "[desktop] Web desktop available at http://$(hostname -I | awk '{print $1}')/desktop (auth: cka/cka)."
+BASE_PATH="/cka-training"
+echo "[desktop] Web desktop available at http://$(hostname -I | awk '{print $1}')$BASE_PATH/desktop (auth: cka/cka)."
