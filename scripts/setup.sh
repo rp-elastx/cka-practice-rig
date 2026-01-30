@@ -51,6 +51,6 @@ for c in "${CLUSTERS[@]}"; do
 done
 
 # Merge kubeconfigs
-"$REPO_DIR/scripts/merge-kubeconfigs.sh"
+bash "$REPO_DIR/scripts/merge-kubeconfigs.sh"
 
 echo "[+] Done. Use: export KUBECONFIG=$KUBECONFIG_DIR/merged.yaml && kubectl config get-contexts"

@@ -6,7 +6,7 @@ set -euo pipefail
 REPO_DIR=$(cd "$(dirname "$0")/../.." && pwd)
 
 # Ensure squid proxy exists
-"$(dirname "$0")/setup-docs-proxy.sh"
+bash "$(dirname "$0")/setup-docs-proxy.sh"
 
 # Determine cka user's UID/GID for proper file ownership
 PUID=$(id -u cka 2>/dev/null || echo 1000)
@@ -31,7 +31,7 @@ else
 fi
 
 # Update nginx site to proxy /desktop (script will re-create and restart nginx)
-"$(dirname "$0")/setup-web.sh"
+bash "$(dirname "$0")/setup-web.sh"
 
 BASE_PATH="/cka-training"
 echo "[desktop] Web desktop available at http://$(hostname -I | awk '{print $1}')$BASE_PATH/desktop (auth: cka/cka)."
