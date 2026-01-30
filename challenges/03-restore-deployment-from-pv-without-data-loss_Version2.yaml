@@ -1,0 +1,56 @@
+id: 03-restore-deployment-from-pv-without-data-loss_Version2
+title: “Restore” a Deployment by creating a new one from an existing PV/PVC without data loss.
+category: storage
+namespace: 03-restore-deployment-from-pv-without-data-loss-version2
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-storage.sh
+grade: ../grading/grade-storage.sh
+description: |
+  Task: “Restore” a Deployment by creating a new one from an existing PV/PVC without data loss.
+  
+  Assumptions:
+  - Existing PVC: pvc-data (bound to PV with Retain policy)
+  - Old Deployment: old-deploy (uses pvc-data)
+  
+  Steps:
+  
+  1) Quiesce old workloads to avoid concurrent writers
+  kubectl scale deploy/old-deploy --replicas=0
+  
+  2) Create a new Deployment that uses the same PVC
+  cat <<'EOF' | kubectl apply -f -
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: restored-deploy
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: restored
+    template:
+      metadata:
+        labels:
+          app: restored
+      spec:
+        containers:
+        - name: app
+          image: busybox:1.36
+          command: ["sh","-c","sleep 3600"]
+          volumeMounts:
+          - name: data
+            mountPath: /data
+        volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pvc-data
+  EOF
+  
+  3) Verify data is present
+  kubectl rollout status deploy/restored-deploy
+  # For example, check a known file:
+  kubectl exec deploy/restored-deploy -- ls -l /data
+  
+  Notes:
+  - If pvc-data is released (PV in Released state), set PV.spec.claimRef to null or recreate PVC with same name/uid if needed (prefer Retain policy).
+  - Ensure only one Deployment uses the RWO PVC at a time to prevent corruption.

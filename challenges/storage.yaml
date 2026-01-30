@@ -1,0 +1,9 @@
+id: storage-basic
+title: Create dynamic PVC and pod
+category: storage
+namespace: storage-chal
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-storage.sh
+grade: ../grading/grade-storage.sh
+description: |
+  In namespace 'storage-chal', create a PVC named 'data-pvc' with size 1Gi using the default StorageClass, and a pod 'app' that mounts it at /data and writes a file /data/ready.txt with the text OK.

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>CKA Practice Scoreboard</title>
+<style>
+body{font-family:system-ui,Arial,sans-serif;margin:2rem;}
+h1{margin-bottom:1rem}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid #ccc;padding:.5rem;text-align:left}
+th{background:#f5f5f5}
+</style>
+</head>
+<body>
+<h1>CKA Practice Scoreboard</h1>
+<table>
+<thead><tr><th>User</th><th>Challenge</th><th>Context</th><th>Status</th><th>Time (s)</th><th>On Time</th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+<script>
+fetch('results.json').then(r=>r.json()).then(arr=>{
+ const rows=document.getElementById('rows');
+ arr.forEach(r=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${r.user}</td><td>${r.challengeId}</td><td>${r.context}</td><td>${r.status}</td><td>${r.elapsedSeconds}</td><td>${r.onTime?'Yes':'No'}</td>`;
+  rows.appendChild(tr);
+ });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+id: rbac-rolebinding
+title: Create Role and RoleBinding
+category: rbac
+namespace: rbac-chal
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-rbac.sh
+grade: ../grading/grade-rbac.sh
+description: |
+  In namespace 'rbac-chal', create a Role 'pod-reader' allowing get/list/watch on pods, and bind it to user 'student' via RoleBinding 'read-pods'.

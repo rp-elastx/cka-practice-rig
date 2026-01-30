@@ -1,0 +1,9 @@
+id: troubleshoot-crashloop
+title: Fix a CrashLoop pod
+category: troubleshooting
+namespace: trouble-chal
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-troubleshooting.sh
+grade: ../grading/grade-troubleshooting.sh
+description: |
+  In namespace 'trouble-chal', fix pod 'bad-app' that is CrashLooping due to missing config. Ensure pod becomes Ready.

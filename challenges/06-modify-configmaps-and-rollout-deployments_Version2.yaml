@@ -1,0 +1,28 @@
+id: 06-modify-configmaps-and-rollout-deployments_Version2
+title: Modify ConfigMaps and trigger rollouts for Deployments.
+category: deployment
+namespace: 06-modify-configmaps-and-rollout-deployments-version2
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-deployment.sh
+grade: ../grading/grade-deployment.sh
+description: |
+  Task: Modify ConfigMaps and trigger rollouts for Deployments.
+  
+  Steps:
+  
+  1) Update the ConfigMap
+  # Edit directly:
+  kubectl edit configmap app-config
+  # Or re-create from literals/files:
+  kubectl create configmap app-config --from-literal=FOO=bar --dry-run=client -o yaml | kubectl apply -f -
+  
+  2) Trigger rollout (needed when config is from env vars or you require a restart)
+  kubectl rollout restart deploy/app
+  
+  3) Watch rollout
+  kubectl rollout status deploy/app
+  
+  Notes:
+  - ConfigMap mounted as a volume updates on the filesystem within ~a minute without restart; processes must re-read the files.
+  - For env-based consumption, pods must be restarted (rollout restart).
+  - If you want automatic restarts on ConfigMap change, add a hash annotation derived from the ConfigMap to the Pod template metadata.

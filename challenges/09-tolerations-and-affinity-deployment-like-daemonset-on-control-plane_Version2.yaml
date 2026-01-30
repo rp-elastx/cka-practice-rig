@@ -1,0 +1,54 @@
+id: 09-tolerations-and-affinity-deployment-like-daemonset-on-control-plane_Version2
+title: Add tolerations and affinity so a Deployment behaves like a DaemonSet and can run on control-plane nodes.
+category: troubleshooting
+namespace: 09-tolerations-and-affinity-deployment-like-daemonset-on-control-plane-version2
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-troubleshooting.sh
+grade: ../grading/grade-troubleshooting.sh
+description: |
+  Task: Add tolerations and affinity so a Deployment behaves like a DaemonSet and can run on control-plane nodes.
+  
+  Assumptions:
+  - Deployment name: app
+  - Label: app=app
+  
+  Steps:
+  
+  1) Tolerate control-plane/master taints and ensure 1 pod per node via podAntiAffinity
+  cat <<'EOF' | kubectl patch deploy app --type=strategic -p "$(cat)"
+  spec:
+    replicas: 3  # set to number of nodes after step 3
+    template:
+      spec:
+        tolerations:
+        - key: "node-role.kubernetes.io/control-plane"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+        affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values: ["app"]
+              topologyKey: "kubernetes.io/hostname"
+  EOF
+  
+  2) Ensure pods target all nodes (optional)
+  # If you need to include only Linux or a subset of nodes, add nodeAffinity accordingly.
+  
+  3) Set replicas equal to node count to emulate DaemonSet (1 per node)
+  NODES=$(kubectl get nodes --no-headers | wc -l)
+  kubectl scale deploy/app --replicas=$NODES
+  
+  4) Verify one pod per node and scheduling on control-plane
+  kubectl get pods -o wide -l app=app
+  kubectl get nodes -o wide
+  
+  Notes:
+  - A true DaemonSet is preferred; this technique approximates it with anti-affinity and replica count.
+  - On clusters with additional taints, add matching tolerations.

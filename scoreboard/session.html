@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>CKA Practice Session</title>
+<style>
+body{font-family:system-ui,Arial,sans-serif;margin:2rem;}
+h1{margin-bottom:.5rem}
+.box{border:1px solid #ddd;padding:1rem;margin:.5rem 0;border-radius:6px}
+#countdown{font-size:1.5rem;color:#b00}
+label{display:inline-block;width:140px;color:#555}
+</style>
+</head>
+<body>
+<h1>Current Session</h1>
+<div id="info" class="box">Loading session...</div>
+<div class="box">
+  <div><label>Challenge time remaining:</label><span id="countdown">—</span></div>
+  <div><label>Session time remaining:</label><span id="sessionCountdown">—</span></div>
+  </div>
+<div class="box">
+  <button id="startBtn">Start New Session</button>
+  <button id="resetBtn">Reset Environment</button>
+  &nbsp;•&nbsp;
+  <a href="desktop/" target="_blank">Open Desktop</a>
+  &nbsp;•&nbsp;
+  <a href="scoreboard/index.html" target="_blank">Scoreboard</a>
+  <div id="actionMsg" style="margin-top:.5rem;color:#055"></div>
+  <div id="errorMsg" style="margin-top:.5rem;color:#b00"></div>
+  </div>
+<script>
+async function load() {
+  try {
+    const r = await fetch('api/status?ts='+Date.now());
+    if (!r.ok) throw new Error('No session');
+    const s = await r.json();
+    const info = document.getElementById('info');
+    info.innerHTML = `
+      <div><label>Challenge:</label><b>${s.challengeId}</b> — ${s.title}</div>
+      <div><label>Namespace:</label>${s.namespace}</div>
+      <div><label>Context:</label>${s.context}</div>
+      <div><label>Time limit:</label>${s.timeLimitSeconds} s</div>
+      <div><label>Progress:</label>${(s.index+1)||1} / ${s.total||1}</div>
+      <div class="box"><pre style="white-space:pre-wrap">${s.description||''}</pre></div>
+    `;
+    const start = new Date(s.start).getTime();
+    const limit = s.timeLimitSeconds*1000;
+    const cd = document.getElementById('countdown');
+    function tick(){
+      const now = Date.now();
+      const left = start + limit - now;
+      if (left <= 0){ cd.textContent = 'Time exceeded'; return; }
+      const m = Math.floor(left/60000), sec = Math.floor((left%60000)/1000);
+      cd.textContent = `${m}m ${sec}s`;
+      requestAnimationFrame(tick);
+    }
+    tick();
+
+    const sStart = s.sessionStart ? new Date(s.sessionStart).getTime() : null;
+    const sLimit = s.totalTimeLimitSeconds ? s.totalTimeLimitSeconds*1000 : null;
+    const sd = document.getElementById('sessionCountdown');
+    function stick(){
+      if (!sStart || !sLimit){ sd.textContent='—'; return; }
+      const now = Date.now();
+      const left = sStart + sLimit - now;
+      if (left <= 0){ sd.textContent = 'Session time exceeded'; return; }
+      const m = Math.floor(left/60000), sec = Math.floor((left%60000)/1000);
+      sd.textContent = `${m}m ${sec}s`;
+      requestAnimationFrame(stick);
+    }
+    stick();
+  } catch(e) {
+    document.getElementById('info').textContent = 'No active session. Click "Start New Session" to begin.';
+  }
+}
+load();
+
+async function post(path){
+  const res = await fetch(path,{method:'POST'});
+  if(!res.ok){ throw new Error(await res.text()); }
+  return res.json();
+}
+
+document.getElementById('startBtn').onclick = async ()=>{
+  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Starting session...';e.textContent='';
+  try { await post('api/start-session'); m.textContent='Session started.'; load(); }
+  catch(err){ e.textContent='Failed to start session: '+err.message; m.textContent=''; }
+};
+
+document.getElementById('resetBtn').onclick = async ()=>{
+  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Resetting...';e.textContent='';
+  try { await post('api/reset'); m.textContent='Environment reset. Please wait a moment and refresh.'; }
+  catch(err){ e.textContent='Failed to reset: '+err.message; m.textContent=''; }
+};
+
+// Done and Next buttons
+const doneBtn=document.createElement('button'); doneBtn.textContent='Done (Grade)';
+const nextBtn=document.createElement('button'); nextBtn.textContent='Next Challenge';
+const actions=document.querySelector('.box');
+actions.appendChild(doneBtn); actions.appendChild(nextBtn);
+
+doneBtn.onclick = async ()=>{
+  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Grading...';e.textContent='';
+  try { await post('api/done'); m.textContent='Graded current challenge.'; }
+  catch(err){ e.textContent='Failed to grade: '+err.message; m.textContent=''; }
+};
+
+nextBtn.onclick = async ()=>{
+  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Loading next challenge...';e.textContent='';
+  try { await post('api/next-challenge'); m.textContent='Next challenge loaded.'; load(); }
+  catch(err){ e.textContent='Failed to go next: '+err.message; m.textContent=''; }
+};
+</script>
+</body>
+</html>

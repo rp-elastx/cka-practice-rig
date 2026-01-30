@@ -1,0 +1,44 @@
+id: 13-choose-and-install-cni-based-on-criteria_Version2
+title: Decide which CNI to install based on criteria, then install it.
+category: cni
+namespace: 13-choose-and-install-cni-based-on-criteria-version2
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-cni.sh
+grade: ../grading/grade-cni.sh
+description: |
+  Task: Decide which CNI to install based on criteria, then install it.
+  
+  Decision cheat-sheet:
+  - Need NetworkPolicy support: Calico, Cilium (yes); Flannel (no, unless with Calico policy).
+  - High performance/eBPF, Hubble observability: Cilium.
+  - Simple/lab, minimal features: Flannel.
+  - Windows nodes: Calico (Win support), Flannel (limited), Cilium (check version support).
+  - BGP/advanced routing: Calico.
+  
+  Install examples (pick one, adjust pod CIDR as required):
+  
+  A) Calico
+  # Ensure cluster pod CIDR matches manifest (e.g., 192.168.0.0/16).
+  # Apply the official operator/manifests from your artifacts/offline bundle or vendor URL.
+  kubectl apply -f calico.yaml
+  
+  B) Cilium
+  # Preflight check (if cilium CLI available)
+  cilium install --version 1.15.5 --set cluster.name=cluster1 --set ipam.mode=kubernetes
+  # Or apply YAML from your provided bundle:
+  kubectl apply -f cilium.yaml
+  
+  C) Flannel
+  # Basic overlay, simple labs:
+  kubectl apply -f kube-flannel.yaml
+  
+  Verify CNI readiness:
+  kubectl -n kube-system get pods -l k8s-app=calico-node
+  kubectl -n kube-system get pods -l k8s-app=cilium
+  kubectl -n kube-system get pods -l app=flannel
+  kubectl get nodes
+  # Schedule a test pod and check networking across nodes.
+  
+  Notes:
+  - Align the manifest’s podCIDR with the cluster’s kube-controller-manager --cluster-cidr or kubeadm PodSubnet.
+  - Use the offline-provided manifests in exam environments instead of fetching from internet.

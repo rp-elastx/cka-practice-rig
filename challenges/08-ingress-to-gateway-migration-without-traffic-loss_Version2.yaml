@@ -1,0 +1,62 @@
+id: 08-ingress-to-gateway-migration-without-traffic-loss_Version2
+title: Migrate from Ingress to Gateway API without traffic loss.
+category: gateway
+namespace: 08-ingress-to-gateway-migration-without-traffic-loss-version2
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-gateway.sh
+grade: ../grading/grade-gateway.sh
+description: |
+  Task: Migrate from Ingress to Gateway API without traffic loss.
+  
+  Assumptions:
+  - Running Ingress routes app.example.com -> svc-name:80
+  - GatewayClass available (e.g., nginx, cilium, istio)
+  
+  Steps:
+  
+  1) Create a Gateway (parallel to existing Ingress)
+  cat <<'EOF' | kubectl apply -f -
+  apiVersion: gateway.networking.k8s.io/v1
+  kind: Gateway
+  metadata:
+    name: app-gw
+  spec:
+    gatewayClassName: nginx
+    listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      hostname: app.example.com
+  EOF
+  
+  2) Create HTTPRoute pointing to the same Service
+  cat <<'EOF' | kubectl apply -f -
+  apiVersion: gateway.networking.k8s.io/v1
+  kind: HTTPRoute
+  metadata:
+    name: app-route
+  spec:
+    parentRefs:
+    - name: app-gw
+    hostnames: ["app.example.com"]
+    rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      backendRefs:
+      - name: svc-name
+        port: 80
+  EOF
+  
+  3) Verify Gateway status/addresses and HTTPRoute attachment
+  kubectl get gateway app-gw -o wide
+  kubectl describe httproute app-route
+  
+  4) Cutover with zero downtime
+  - Add a second A/AAAA record (weighted or multi-value) so traffic flows to both Ingress LB and Gateway LB.
+  - Observe success rate, logs.
+  - Shift DNS weight to the Gateway LB or remove the Ingress LB record.
+  
+  5) Decommission old Ingress
+  kubectl delete ingress app-ingress

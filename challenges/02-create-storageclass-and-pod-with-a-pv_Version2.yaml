@@ -1,0 +1,75 @@
+id: 02-create-storageclass-and-pod-with-a-pv_Version2
+title: Create a StorageClass and a Pod that uses a PV.
+category: storage
+namespace: 02-create-storageclass-and-pod-with-a-pv-version2
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-storage.sh
+grade: ../grading/grade-storage.sh
+description: |
+  Task: Create a StorageClass and a Pod that uses a PV.
+  
+  Steps (exam-optimized):
+  
+  1) Create StorageClass (no-provisioner, static PV)
+  cat <<'EOF' | kubectl apply -f -
+  apiVersion: storage.k8s.io/v1
+  kind: StorageClass
+  metadata:
+    name: manual
+  provisioner: kubernetes.io/no-provisioner
+  volumeBindingMode: WaitForFirstConsumer
+  EOF
+  
+  2) Create a static PV and PVC (1Gi, RWO, hostPath)
+  cat <<'EOF' | kubectl apply -f -
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: pv-manual-1
+  spec:
+    capacity:
+      storage: 1Gi
+    volumeMode: Filesystem
+    accessModes: ["ReadWriteOnce"]
+    storageClassName: manual
+    persistentVolumeReclaimPolicy: Retain
+    hostPath:
+      path: /mnt/data/pv-manual-1
+  ---
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: pvc-manual-1
+  spec:
+    accessModes: ["ReadWriteOnce"]
+    storageClassName: manual
+    resources:
+      requests:
+        storage: 1Gi
+  EOF
+  
+  3) Create a Pod that mounts the PVC at /data
+  cat <<'EOF' | kubectl apply -f -
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: pod-pv-demo
+  spec:
+    containers:
+    - name: app
+      image: busybox:1.36
+      command: ["sh","-c","sleep 3600"]
+      volumeMounts:
+      - name: data
+        mountPath: /data
+    volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: pvc-manual-1
+  EOF
+  
+  4) Verify binding and mount
+  kubectl get sc
+  kubectl get pv,pvc
+  kubectl describe pvc pvc-manual-1
+  kubectl exec pod-pv-demo -- sh -c 'mount | grep /data || true'

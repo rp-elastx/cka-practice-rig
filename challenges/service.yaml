@@ -1,0 +1,9 @@
+id: service-basic
+title: Expose pod via ClusterIP service
+category: service
+namespace: service-chal
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-service.sh
+grade: ../grading/grade-service.sh
+description: |
+  In namespace 'service-chal', expose pod 'echo' on port 8080 with a ClusterIP service 'echo-svc'. Confirm service endpoints are ready.

@@ -1,0 +1,39 @@
+id: 10-fix-namespace-resource-quota-requests-tuning_Version2
+title: Namespace hits ResourceQuota; tune requests so all pods can run.
+category: quota
+namespace: 10-fix-namespace-resource-quota-requests-tuning-version2
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-quota.sh
+grade: ../grading/grade-quota.sh
+description: |
+  Task: Namespace hits ResourceQuota; tune requests so all pods can run.
+  
+  Steps:
+  
+  1) Inspect quotas and usage
+  NS=<namespace>
+  kubectl get resourcequota -n $NS
+  kubectl describe resourcequota -n $NS
+  kubectl get limits -n $NS  # LimitRange objects
+  
+  2) Identify offending requests/limits
+  kubectl get pods -n $NS
+  kubectl describe pods -n $NS | sed -n '/Limits:/,/Events:/p'
+  
+  3) Reduce requests/limits to fit quota (example)
+  DEPLOY=<name>
+  kubectl set resources deploy/$DEPLOY -n $NS --requests=cpu=100m,memory=128Mi --limits=cpu=200m,memory=256Mi
+  
+  # For multiple containers:
+  kubectl set resources deploy/$DEPLOY -n $NS -c <container> --requests=cpu=100m,memory=128Mi
+  
+  4) Re-check quota and pending pods
+  kubectl describe resourcequota -n $NS
+  kubectl get pods -n $NS
+  
+  5) Optional: adjust LimitRange to enforce sane defaults
+  kubectl edit limitrange -n $NS
+  
+  Notes:
+  - Requests must be within ResourceQuota hard limits summed across running/pending pods.
+  - Lower requests first; limits affect quota only if counted (limits.* in ResourceQuota).

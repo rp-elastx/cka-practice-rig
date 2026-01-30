@@ -1,0 +1,30 @@
+id: 12-helm-install-and-templating-with-custom-values-and-version_Version2
+title: Install a Helm chart with custom values and a specific version; render templates.
+category: helm
+namespace: 12-helm-install-and-templating-with-custom-values-and-version-version2
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-helm.sh
+grade: ../grading/grade-helm.sh
+description: |
+  Task: Install a Helm chart with custom values and a specific version; render templates.
+  
+  Steps:
+  
+  1) Discover chart and version
+  helm repo add bitnami https://charts.bitnami.com/bitnami
+  helm repo update
+  helm search repo bitnami/nginx --versions | head
+  
+  2) Get default values and create custom values.yaml
+  helm show values bitnami/nginx --version 15.0.0 > values.yaml
+  # Edit values.yaml as required (service.type, replicas, resources, ingress, etc.)
+  
+  3) Install with custom values and selected version
+  helm install my-nginx bitnami/nginx --version 15.0.0 -f values.yaml -n apps --create-namespace
+  
+  4) Verify release
+  helm list -n apps
+  kubectl get all -n apps -l app.kubernetes.io/instance=my-nginx
+  
+  5) Render manifests locally (no install)
+  helm template my-nginx bitnami/nginx --version 15.0.0 -f values.yaml > rendered.yaml

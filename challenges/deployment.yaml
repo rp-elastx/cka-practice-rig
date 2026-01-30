@@ -1,0 +1,9 @@
+id: deployment-scale
+title: Scale a deployment with HPA
+category: deployment
+namespace: deploy-chal
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-deployment.sh
+grade: ../grading/grade-deployment.sh
+description: |
+  In namespace 'deploy-chal', for deployment 'web', ensure CPU requests exist, then create an HPA with min=1, max=4, target CPU=50% and scaleDown stabilization of 30s.

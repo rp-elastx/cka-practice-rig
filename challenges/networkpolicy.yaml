@@ -1,0 +1,9 @@
+id: netpol-restrict
+title: Apply restrictive NetworkPolicy
+category: networkpolicy
+namespace: netpol-chal
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-networkpolicy.sh
+grade: ../grading/grade-networkpolicy.sh
+description: |
+  In namespace 'netpol-chal', allow pod 'client' to access 'server' on TCP 80, but deny all other ingress to 'server'.
