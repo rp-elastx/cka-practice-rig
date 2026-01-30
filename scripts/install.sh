@@ -6,6 +6,9 @@ set -euo pipefail
 # - nginx and ttyd for web GUI
 # - sandbox user 'cka' for web terminal
 
+# Repo root (this script lives in repo/scripts/)
+REPO_DIR=$(cd "$(dirname "$0")/.." && pwd)
+
 if ! command -v lsb_release >/dev/null 2>&1; then
   echo "[install] lsb_release not found; ensure Ubuntu 24.04 environment"
 fi
@@ -37,12 +40,42 @@ if ! command -v docker >/dev/null 2>&1; then
   sudo usermod -aG docker "$USER" || true
 fi
 
-# kubectl
+# kubectl (prefer Kubernetes apt repo → snap → validated curl)
 if ! command -v kubectl >/dev/null 2>&1; then
   echo "[install] Installing kubectl"
-  KVER=$(curl -s https://dl.k8s.io/release/stable.txt)
-  curl -fsSL https://dl.k8s.io/release/${KVER}/bin/linux/amd64/kubectl -o /tmp/kubectl
-  sudo install /tmp/kubectl /usr/local/bin/kubectl
+  # Add Kubernetes apt repo
+  sudo install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+  sudo chmod a+r /etc/apt/keyrings/kubernetes-archive-keyring.gpg || true
+  echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | \
+    sudo tee /etc/apt/sources.list.d/kubernetes.list > /dev/null
+  if sudo apt update && sudo apt install -y kubectl; then
+    echo "[install] kubectl installed via apt"
+  else
+    echo "[install] apt kubectl failed; trying snap"
+    if command -v snap >/dev/null 2>&1; then
+      sudo snap install kubectl --classic || echo "[install] snap kubectl failed"
+    fi
+  fi
+  # Validated curl fallback if still not present
+  if ! command -v kubectl >/dev/null 2>&1; then
+    echo "[install] Trying direct download from dl.k8s.io"
+    KVER=$(curl -fsSL https://dl.k8s.io/release/stable.txt || true)
+    if echo "$KVER" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]'; then
+      if curl -fsSL "https://dl.k8s.io/release/${KVER}/bin/linux/amd64/kubectl" -o /tmp/kubectl; then
+        sudo install /tmp/kubectl /usr/local/bin/kubectl
+      else
+        echo "[install] curl download failed (network/proxy?)"
+      fi
+    else
+      echo "[install] Invalid kubectl version string fetched ('$KVER'); skipping curl install"
+    fi
+  fi
+  if command -v kubectl >/dev/null 2>&1; then
+    echo "[install] kubectl installed: $(kubectl version --client --short 2>/dev/null || echo ok)"
+  else
+    echo "[install] ERROR: kubectl installation failed"
+  fi
 fi
 
 # kind
