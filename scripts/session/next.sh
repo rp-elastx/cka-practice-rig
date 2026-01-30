@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:$PATH"
 REPO_DIR=$(cd "$(dirname "$0")/../.." && pwd)
 KUBECONFIG_MERGED="$REPO_DIR/kubeconfigs/merged.yaml"
 CHAL_DIR="$REPO_DIR/challenges"
@@ -52,7 +53,18 @@ fi
 chal_grade=$(realpath -m "$REPO_DIR/grading/$(basename "$chal_grade_rel")")
 
 # Pick random context
-mapfile -t contexts < <(KUBECONFIG="$KUBECONFIG_MERGED" kubectl config get-contexts -o name)
+# Resolve kubectl path robustly
+KUBECTL_BIN=$(command -v kubectl || true)
+if [ -z "${KUBECTL_BIN}" ]; then
+  for p in /usr/bin/kubectl /usr/local/bin/kubectl /snap/bin/kubectl; do
+    if [ -x "$p" ]; then KUBECTL_BIN="$p"; break; fi
+  done
+fi
+if [ -z "${KUBECTL_BIN}" ]; then
+  echo "Error: kubectl not found in PATH" >&2
+  exit 127
+fi
+mapfile -t contexts < <(KUBECONFIG="$KUBECONFIG_MERGED" "$KUBECTL_BIN" config get-contexts -o name)
 ctx=${contexts[$((RANDOM % ${#contexts[@]}))]}
 
 # Persist current challenge state
@@ -77,7 +89,7 @@ EOF
 
 # Run setup against selected context
 export KUBECONFIG="$KUBECONFIG_MERGED"
-kubectl config use-context "$ctx" >/dev/null
-"$chal_setup"
+"$KUBECTL_BIN" config use-context "$ctx" >/dev/null
+bash "$chal_setup"
 
 echo "[session] Next challenge: $chal_id (index $new_idx/$total)."

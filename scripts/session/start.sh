@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+# Ensure PATH includes common locations when running under systemd services
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:$PATH"
+
 REPO_DIR=$(cd "$(dirname "$0")/../.." && pwd)
 KUBECONFIG_MERGED="$REPO_DIR/kubeconfigs/merged.yaml"
 CHAL_DIR="$REPO_DIR/challenges"
@@ -25,8 +28,20 @@ fi
 shuf_list=($(printf '%s\n' "${challenges[@]}" | shuf))
 sel_list=(${shuf_list[@]:0:10})
 
+# Resolve kubectl path robustly
+KUBECTL_BIN=$(command -v kubectl || true)
+if [ -z "${KUBECTL_BIN}" ]; then
+  for p in /usr/bin/kubectl /usr/local/bin/kubectl /snap/bin/kubectl; do
+    if [ -x "$p" ]; then KUBECTL_BIN="$p"; break; fi
+  done
+fi
+if [ -z "${KUBECTL_BIN}" ]; then
+  echo "Error: kubectl not found in PATH" >&2
+  exit 127
+fi
+
 # Pick random context
-mapfile -t contexts < <(KUBECONFIG="$KUBECONFIG_MERGED" kubectl config get-contexts -o name)
+mapfile -t contexts < <(KUBECONFIG="$KUBECONFIG_MERGED" "$KUBECTL_BIN" config get-contexts -o name)
 if [ ${#contexts[@]} -eq 0 ]; then
   echo "Error: no contexts in merged kubeconfig" >&2
   exit 1
@@ -97,7 +112,7 @@ EOF
 
 # Run setup against selected context
 export KUBECONFIG="$KUBECONFIG_MERGED"
-kubectl config use-context "$ctx" >/dev/null
-"$chal_setup"
+"$KUBECTL_BIN" config use-context "$ctx" >/dev/null
+bash "$chal_setup"
 
 echo "[session] Started session $session_id with ${#sel_list[@]} challenges. Current: $chal_id (index $idx)."
