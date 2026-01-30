@@ -7,10 +7,6 @@ SITE_CONF="/etc/nginx/sites-available/cka-practice"
 BASE_PATH="/cka-training"
 SSL_CERT="/etc/ssl/certs/cka-practice-selfsigned.crt"
 SSL_KEY="/etc/ssl/private/cka-practice-selfsigned.key"
-SSL_LINES=""
-if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
-  SSL_LINES="  listen 443 ssl;\n  ssl_certificate $SSL_CERT;\n  ssl_certificate_key $SSL_KEY;\n  if (\$scheme = http) { return 301 https://\$host\$request_uri; }"
-fi
 
 # Systemd unit for ttyd (web terminal) running as 'cka'
 UNIT_PATH="/etc/systemd/system/ttyd@.service"
@@ -48,11 +44,15 @@ fi
 sudo tee "$SITE_CONF" >/dev/null <<EOF
 server {
   listen 80;
-${SSL_LINES}
   server_name _;
 
   # Scoreboard static files under base path
+
+# If self-signed cert exists, append HTTPS listen and redirect lines after listen 80
+if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
+  sudo sed -i "/^  listen 80;/a \
   location $BASE_PATH/scoreboard/ {
+fi
     alias $WWW_DIR/scoreboard/;
     autoindex off;
     auth_basic "CKA Practice";

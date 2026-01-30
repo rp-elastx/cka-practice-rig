@@ -1,4 +1,4 @@
-id: 03-restore-deployment-from-pv-without-data-loss_Version2
+id: restore-deployment-from-pv-without-data-loss
 title: “Restore” a Deployment by creating a new one from an existing PV/PVC without data loss.
 category: storage
 namespace: storage-chal

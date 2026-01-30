@@ -1,4 +1,4 @@
-id: 09-tolerations-and-affinity-deployment-like-daemonset-on-control-plane_Version2
+id: tolerations-and-affinity-deployment-like-daemonset-on-control-plane
 title: Add tolerations and affinity so a Deployment behaves like a DaemonSet and can run on control-plane nodes.
 category: deployment
 namespace: deploy-chal

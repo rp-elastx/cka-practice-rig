@@ -1,4 +1,4 @@
-id: 11-troubleshoot-cluster-after-external-etcd-to-kubeadm-migration_Version2
+id: troubleshoot-cluster-after-external-etcd-to-kubeadm-migration
 title: Troubleshoot broken control plane after migrating to external etcd (kubeadm).
 category: troubleshooting
 namespace: troubleshoot-chal

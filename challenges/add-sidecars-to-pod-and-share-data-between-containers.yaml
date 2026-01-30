@@ -1,4 +1,4 @@
-id: 05-add-sidecars-to-pod-and-share-data-between-containers_Version2
+id: add-sidecars-to-pod-and-share-data-between-containers
 title: Add sidecar containers to a Pod and share data between all containers.
 category: deployment
 namespace: deploy-chal

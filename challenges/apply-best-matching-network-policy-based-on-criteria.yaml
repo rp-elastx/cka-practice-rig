@@ -1,4 +1,4 @@
-id: 14-apply-best-matching-network-policy-based-on-criteria_Version2
+id: apply-best-matching-network-policy-based-on-criteria
 title: Apply the best matching NetworkPolicy given criteria.
 category: networkpolicy
 namespace: network-chal

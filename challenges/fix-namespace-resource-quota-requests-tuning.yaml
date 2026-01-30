@@ -1,4 +1,4 @@
-id: 10-fix-namespace-resource-quota-requests-tuning_Version2
+id: fix-namespace-resource-quota-requests-tuning
 title: Namespace hits ResourceQuota; tune requests so all pods can run.
 category: quota
 namespace: quota-chal

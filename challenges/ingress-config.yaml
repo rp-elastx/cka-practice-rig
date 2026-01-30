@@ -1,4 +1,4 @@
-id: 07-ingress-config_Version2
+id: ingress-config
 title: Configure an Ingress to route traffic to a Service.
 category: gateway
 namespace: gateway-chal

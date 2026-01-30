@@ -1,4 +1,4 @@
-id: 13-choose-and-install-cni-based-on-criteria_Version2
+id: choose-and-install-cni-based-on-criteria
 title: Decide which CNI to install based on criteria, then install it.
 category: cni
 namespace: cni-chal

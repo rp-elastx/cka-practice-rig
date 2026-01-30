@@ -1,4 +1,4 @@
-id: 12-helm-install-and-templating-with-custom-values-and-version_Version2
+id: helm-install-and-templating-with-custom-values-and-version
 title: Install a Helm chart with custom values and a specific version; render templates.
 category: helm
 namespace: helm-chal

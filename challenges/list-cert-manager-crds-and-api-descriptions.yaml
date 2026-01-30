@@ -1,4 +1,4 @@
-id: 15-list-cert-manager-crds-and-api-descriptions_Version2
+id: list-cert-manager-crds-and-api-descriptions
 title: List CRDs installed by cert-manager and get API descriptions.
 category: certmanager
 namespace: cert-chal

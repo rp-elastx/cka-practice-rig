@@ -1,4 +1,4 @@
-id: 06-modify-configmaps-and-rollout-deployments_Version2
+id: modify-configmaps-and-rollout-deployments
 title: Modify ConfigMaps and trigger rollouts for Deployments.
 category: deployment
 namespace: deploy-chal

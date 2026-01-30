@@ -1,4 +1,4 @@
-id: 08-ingress-to-gateway-migration-without-traffic-loss_Version2
+id: ingress-to-gateway-migration-without-traffic-loss
 title: Migrate from Ingress to Gateway API without traffic loss.
 category: gateway
 namespace: gateway-chal

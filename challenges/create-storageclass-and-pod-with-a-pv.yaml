@@ -1,4 +1,4 @@
-id: 02-create-storageclass-and-pod-with-a-pv_Version2
+id: create-storageclass-and-pod-with-a-pv
 title: Create a StorageClass and a Pod that uses a PV.
 category: storage
 namespace: storage-chal

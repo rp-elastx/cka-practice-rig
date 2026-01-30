@@ -1,4 +1,4 @@
-id: 04-create-pod-and-service-from-description_Version2
+id: create-pod-and-service-from-description
 title: Create a Pod and a Service from a textual description.
 category: service
 namespace: service-chal
