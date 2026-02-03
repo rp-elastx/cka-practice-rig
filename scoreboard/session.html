@@ -11,21 +11,37 @@ body {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   min-height: 100vh;
   color: #fff;
-  padding: 2rem;
 }
-.container {
-  max-width: 900px;
-  margin: 0 auto;
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 400px;
+  min-width: 350px;
+  background: rgba(0, 0, 0, 0.3);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.main {
+  flex: 1;
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
 }
 .header {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-.header .logo { font-size: 2.5rem; }
+.header .logo { font-size: 2rem; }
 h1 {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 300;
 }
 h1 span { font-weight: 700; color: #326ce5; }
@@ -33,79 +49,132 @@ h1 span { font-weight: 700; color: #326ce5; }
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 1.25rem;
   margin-bottom: 1rem;
 }
 .card-title {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #888;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
-.info-row {
-  display: flex;
+.challenge-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #326ce5;
   margin-bottom: 0.5rem;
 }
-.info-label {
-  width: 140px;
-  color: #888;
-  flex-shrink: 0;
+.challenge-meta {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
-.info-value {
-  color: #fff;
+.meta-item {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
 }
-.info-value b { color: #326ce5; }
+.meta-item code {
+  color: #2ecc71;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
 .description-box {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 8px;
   padding: 1rem;
-  margin-top: 1rem;
-  font-family: 'Monaco', 'Menlo', monospace;
   font-size: 0.9rem;
-  line-height: 1.6;
+  line-height: 1.7;
   white-space: pre-wrap;
-  color: #ccc;
-}
-.timer-row {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-.timer {
+  color: #ddd;
   flex: 1;
-  min-width: 200px;
+  overflow-y: auto;
+}
+.docs-section {
+  margin-top: 1rem;
+}
+.docs-title {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin-bottom: 0.5rem;
+}
+.docs-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.docs-links a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #326ce5;
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  background: rgba(50, 108, 229, 0.1);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+.docs-links a:hover {
+  background: rgba(50, 108, 229, 0.2);
+}
+.timer-display {
+  text-align: center;
+  padding: 1.5rem;
 }
 .timer-label {
   font-size: 0.85rem;
   color: #888;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
 }
 .timer-value {
-  font-size: 1.8rem;
+  font-size: 3rem;
   font-weight: 700;
   font-family: 'Monaco', 'Menlo', monospace;
 }
+.timer-value.ok { color: #2ecc71; }
 .timer-value.warning { color: #f39c12; }
 .timer-value.danger { color: #e74c3c; }
-.timer-value.ok { color: #2ecc71; }
+.progress-bar {
+  margin-top: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  height: 8px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #326ce5, #2ecc71);
+  transition: width 0.3s;
+}
+.progress-text {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #888;
+}
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 .btn {
-  padding: 0.75rem 1.5rem;
-  font-size: 0.95rem;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
   font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 .btn-primary {
   background: linear-gradient(135deg, #326ce5 0%, #1e4db7 100%);
@@ -154,22 +223,32 @@ h1 span { font-weight: 700; color: #326ce5; }
   transform: none !important;
   box-shadow: none !important;
 }
-.link-btn {
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+}
+.quick-links {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.quick-link {
   color: #326ce5;
   text-decoration: none;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   font-weight: 500;
+  font-size: 0.9rem;
+  background: rgba(50, 108, 229, 0.1);
+  border-radius: 6px;
 }
-.link-btn:hover { text-decoration: underline; }
-.divider {
-  color: #444;
-  margin: 0 0.25rem;
+.quick-link:hover {
+  background: rgba(50, 108, 229, 0.2);
 }
 .message {
-  margin-top: 1rem;
   padding: 0.75rem 1rem;
   border-radius: 8px;
   font-size: 0.9rem;
+  margin-bottom: 1rem;
 }
 .message.success {
   background: rgba(39, 174, 96, 0.2);
@@ -184,130 +263,283 @@ h1 span { font-weight: 700; color: #326ce5; }
 .message:empty { display: none; }
 .no-session {
   text-align: center;
-  padding: 3rem;
+  padding: 3rem 1rem;
   color: #888;
 }
-.no-session .icon { font-size: 3rem; margin-bottom: 1rem; }
-.back-link {
-  display: inline-block;
+.no-session .icon { font-size: 4rem; margin-bottom: 1rem; }
+.no-session h2 { color: #fff; margin-bottom: 0.5rem; }
+.stats-row {
+  display: flex;
+  gap: 1rem;
   margin-bottom: 1rem;
+}
+.stat-card {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+}
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #326ce5;
+}
+.stat-label {
+  font-size: 0.8rem;
+  color: #888;
+  text-transform: uppercase;
+}
+.back-link {
   color: #888;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  display: inline-block;
 }
 .back-link:hover { color: #326ce5; }
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; min-width: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <a href="/" class="back-link">← Back to Home</a>
+<div class="layout">
+  <div class="sidebar">
+    <div class="header">
+      <div class="logo">☸️</div>
+      <h1>CKA <span>Practice</span></h1>
+    </div>
+    
+    <div id="challenge-panel">
+      <div class="no-session">
+        <div class="icon">📋</div>
+        <p>Loading...</p>
+      </div>
+    </div>
+  </div>
   
-  <div class="header">
-    <div class="logo">☸️</div>
-    <h1>CKA <span>Practice</span> Session</h1>
-  </div>
-
-  <div id="info" class="card">
-    <div class="no-session">
-      <div class="icon">📋</div>
-      <p>Loading session...</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">⏱️ Time Remaining</div>
-    <div class="timer-row">
-      <div class="timer">
-        <div class="timer-label">Challenge</div>
-        <div class="timer-value ok" id="countdown">—</div>
-      </div>
-      <div class="timer">
-        <div class="timer-label">Session Total</div>
-        <div class="timer-value ok" id="sessionCountdown">—</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">🎮 Actions</div>
-    <div class="actions">
-      <button id="startBtn" class="btn btn-primary">▶ Start New Session</button>
-      <button id="doneBtn" class="btn btn-success">✓ Done (Grade)</button>
-      <button id="nextBtn" class="btn btn-warning">→ Next Challenge</button>
-      <button id="syncBtn" class="btn btn-secondary">↻ Sync Scoreboard</button>
-      <button id="resetBtn" class="btn btn-danger">⟲ Reset</button>
-      <span class="divider">|</span>
-      <a href="desktop/" target="_blank" class="link-btn">🖥️ Desktop</a>
-      <a href="scoreboard/index.html" target="_blank" class="link-btn">📊 Scoreboard</a>
-    </div>
+  <div class="main">
+    <a href="/" class="back-link">← Back to Home</a>
+    
     <div id="actionMsg" class="message success"></div>
     <div id="errorMsg" class="message error"></div>
+    
+    <div id="session-panel">
+      <div class="no-session">
+        <div class="icon">🚀</div>
+        <h2>Ready to Practice?</h2>
+        <p>Start a 2-hour timed session and complete as many challenges as you can!</p>
+        <br>
+        <button id="startBtn" class="btn btn-primary btn-lg">▶ Start New Session</button>
+      </div>
+    </div>
+    
+    <div id="active-session" style="display:none;">
+      <div class="card">
+        <div class="timer-display">
+          <div class="timer-label">⏱️ Session Time Remaining</div>
+          <div class="timer-value ok" id="sessionCountdown">2:00:00</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-text" id="progressText">0 / 0 challenges completed</div>
+      </div>
+      
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" id="completedCount">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="passedCount">0</div>
+          <div class="stat-label">Passed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="currentNum">1</div>
+          <div class="stat-label">Current</div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">🎮 Actions</div>
+        <div class="actions">
+          <button id="doneBtn" class="btn btn-success">✓ Submit & Grade</button>
+          <button id="nextBtn" class="btn btn-warning">→ Next Challenge</button>
+          <button id="syncBtn" class="btn btn-secondary">↻ Sync Scoreboard</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-title">🔗 Quick Links</div>
+        <div class="quick-links">
+          <a href="desktop/" target="_blank" class="quick-link">🖥️ Desktop</a>
+          <a href="scoreboard/index.html" target="_blank" class="quick-link">📊 Scoreboard</a>
+          <button id="resetBtn" class="btn btn-danger" style="margin-left:auto;">⟲ Reset Environment</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
+// Documentation links mapping by challenge topic
+const docsMap = {
+  'pod': ['https://kubernetes.io/docs/concepts/workloads/pods/', 'Pods'],
+  'deployment': ['https://kubernetes.io/docs/concepts/workloads/controllers/deployment/', 'Deployments'],
+  'service': ['https://kubernetes.io/docs/concepts/services-networking/service/', 'Services'],
+  'ingress': ['https://kubernetes.io/docs/concepts/services-networking/ingress/', 'Ingress'],
+  'configmap': ['https://kubernetes.io/docs/concepts/configuration/configmap/', 'ConfigMaps'],
+  'secret': ['https://kubernetes.io/docs/concepts/configuration/secret/', 'Secrets'],
+  'pv': ['https://kubernetes.io/docs/concepts/storage/persistent-volumes/', 'Persistent Volumes'],
+  'pvc': ['https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims', 'PVCs'],
+  'storage': ['https://kubernetes.io/docs/concepts/storage/', 'Storage'],
+  'storageclass': ['https://kubernetes.io/docs/concepts/storage/storage-classes/', 'StorageClasses'],
+  'rbac': ['https://kubernetes.io/docs/reference/access-authn-authz/rbac/', 'RBAC'],
+  'serviceaccount': ['https://kubernetes.io/docs/concepts/security/service-accounts/', 'Service Accounts'],
+  'networkpolicy': ['https://kubernetes.io/docs/concepts/services-networking/network-policies/', 'Network Policies'],
+  'netpol': ['https://kubernetes.io/docs/concepts/services-networking/network-policies/', 'Network Policies'],
+  'hpa': ['https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/', 'HPA'],
+  'scale': ['https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/', 'Autoscaling'],
+  'taint': ['https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/', 'Taints & Tolerations'],
+  'toleration': ['https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/', 'Taints & Tolerations'],
+  'affinity': ['https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/', 'Node Affinity'],
+  'node': ['https://kubernetes.io/docs/concepts/architecture/nodes/', 'Nodes'],
+  'drain': ['https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/', 'Drain Nodes'],
+  'cordon': ['https://kubernetes.io/docs/reference/kubectl/generated/kubectl_cordon/', 'Cordon'],
+  'etcd': ['https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/', 'etcd'],
+  'backup': ['https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster', 'etcd Backup'],
+  'upgrade': ['https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/', 'Cluster Upgrade'],
+  'helm': ['https://helm.sh/docs/', 'Helm'],
+  'cni': ['https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/', 'CNI'],
+  'dns': ['https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/', 'DNS'],
+  'logs': ['https://kubernetes.io/docs/concepts/cluster-administration/logging/', 'Logging'],
+  'events': ['https://kubernetes.io/docs/reference/kubectl/generated/kubectl_get/', 'kubectl get events'],
+  'troubleshoot': ['https://kubernetes.io/docs/tasks/debug/', 'Troubleshooting'],
+  'quota': ['https://kubernetes.io/docs/concepts/policy/resource-quotas/', 'Resource Quotas'],
+  'limit': ['https://kubernetes.io/docs/concepts/policy/limit-range/', 'Limit Ranges'],
+  'resource': ['https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/', 'Resource Management'],
+  'sidecar': ['https://kubernetes.io/docs/concepts/workloads/pods/sidecar-containers/', 'Sidecar Containers'],
+  'multi': ['https://kubernetes.io/docs/tasks/access-application-cluster/communicate-containers-same-pod-shared-volume/', 'Multi-container Pods'],
+  'volume': ['https://kubernetes.io/docs/concepts/storage/volumes/', 'Volumes'],
+  'static': ['https://kubernetes.io/docs/tasks/configure-pod-container/static-pod/', 'Static Pods'],
+  'rollout': ['https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment', 'Rollouts'],
+  'rollback': ['https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-back-a-deployment', 'Rollbacks'],
+  'jsonpath': ['https://kubernetes.io/docs/reference/kubectl/jsonpath/', 'JSONPath'],
+  'gateway': ['https://kubernetes.io/docs/concepts/services-networking/gateway/', 'Gateway API'],
+  'clusterrole': ['https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole', 'ClusterRole'],
+  'rolebinding': ['https://kubernetes.io/docs/reference/access-authn-authz/rbac/#rolebinding-and-clusterrolebinding', 'RoleBindings'],
+  'nodeport': ['https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport', 'NodePort'],
+  'cert': ['https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/', 'TLS Certificates'],
+};
+
+function getDocsForChallenge(challengeId, title, description) {
+  const links = [];
+  const text = (challengeId + ' ' + title + ' ' + description).toLowerCase();
+  
+  for (const [keyword, [url, label]] of Object.entries(docsMap)) {
+    if (text.includes(keyword) && !links.find(l => l.url === url)) {
+      links.push({ url, label });
+    }
+  }
+  
+  // Always add kubectl cheatsheet
+  links.push({ url: 'https://kubernetes.io/docs/reference/kubectl/quick-reference/', label: 'kubectl Cheat Sheet' });
+  
+  return links.slice(0, 5); // Max 5 links
+}
+
+let sessionData = null;
+
 async function load() {
   try {
     const r = await fetch('api/status?ts='+Date.now());
     if (!r.ok) throw new Error('No session');
     const s = await r.json();
-    const info = document.getElementById('info');
-    info.innerHTML = `
-      <div class="card-title">📝 Current Challenge</div>
-      <div class="info-row"><span class="info-label">Challenge:</span><span class="info-value"><b>${s.challengeId}</b></span></div>
-      <div class="info-row"><span class="info-label">Title:</span><span class="info-value">${s.title}</span></div>
-      <div class="info-row"><span class="info-label">Namespace:</span><span class="info-value"><code>${s.namespace}</code></span></div>
-      <div class="info-row"><span class="info-label">Context:</span><span class="info-value"><code>${s.context}</code></span></div>
-      <div class="info-row"><span class="info-label">Time limit:</span><span class="info-value">${s.timeLimitSeconds} seconds</span></div>
-      <div class="info-row"><span class="info-label">Progress:</span><span class="info-value"><b>${(s.index+1)||1}</b> / ${s.total||1} challenges</span></div>
-      <div class="description-box">${s.description||'No description available.'}</div>
+    sessionData = s;
+    
+    // Show active session UI
+    document.getElementById('session-panel').style.display = 'none';
+    document.getElementById('active-session').style.display = 'block';
+    
+    // Get documentation links
+    const docs = getDocsForChallenge(s.challengeId, s.title, s.description || '');
+    const docsHtml = docs.map(d => 
+      `<a href="${d.url}" target="_blank">📖 ${d.label}</a>`
+    ).join('');
+    
+    // Update challenge panel
+    document.getElementById('challenge-panel').innerHTML = `
+      <div class="challenge-title">${s.title}</div>
+      <div class="challenge-meta">
+        <span class="meta-item">Context: <code>${s.context}</code></span>
+        <span class="meta-item">NS: <code>${s.namespace}</code></span>
+      </div>
+      <div class="description-box">${s.description || 'No description available.'}</div>
+      <div class="docs-section">
+        <div class="docs-title">📚 Relevant Documentation</div>
+        <div class="docs-links">${docsHtml}</div>
+      </div>
     `;
-    const start = new Date(s.start).getTime();
-    const limit = s.timeLimitSeconds*1000;
-    const cd = document.getElementById('countdown');
-    function tick(){
-      const now = Date.now();
-      const left = start + limit - now;
-      if (left <= 0){ cd.textContent = '⚠️ Time exceeded'; cd.className='timer-value danger'; return; }
-      const m = Math.floor(left/60000), sec = Math.floor((left%60000)/1000);
-      cd.textContent = `${m}:${sec.toString().padStart(2,'0')}`;
-      if (left < 60000) { cd.className='timer-value danger'; }
-      else if (left < 180000) { cd.className='timer-value warning'; }
-      else { cd.className='timer-value ok'; }
-      requestAnimationFrame(tick);
-    }
-    tick();
-
-    const sStart = s.sessionStart ? new Date(s.sessionStart).getTime() : null;
-    const sLimit = s.totalTimeLimitSeconds ? s.totalTimeLimitSeconds*1000 : null;
+    
+    // Update stats
+    document.getElementById('currentNum').textContent = (s.index || 0) + 1;
+    document.getElementById('completedCount').textContent = s.completed || 0;
+    document.getElementById('passedCount').textContent = s.passed || 0;
+    document.getElementById('progressText').textContent = `${s.completed || 0} challenges completed`;
+    
+    // Session countdown (2 hours)
+    const sStart = s.sessionStart ? new Date(s.sessionStart).getTime() : Date.now();
+    const sLimit = (s.totalTimeLimitSeconds || 7200) * 1000; // 2 hours default
     const sd = document.getElementById('sessionCountdown');
-    function stick(){
-      if (!sStart || !sLimit){ sd.textContent='—'; return; }
+    
+    function sessionTick() {
       const now = Date.now();
-      const left = sStart + sLimit - now;
-      if (left <= 0){ sd.textContent = '⚠️ Session ended'; sd.className='timer-value danger'; return; }
-      const m = Math.floor(left/60000), sec = Math.floor((left%60000)/1000);
-      sd.textContent = `${m}:${sec.toString().padStart(2,'0')}`;
-      if (left < 300000) { sd.className='timer-value danger'; }
-      else if (left < 600000) { sd.className='timer-value warning'; }
-      else { sd.className='timer-value ok'; }
-      requestAnimationFrame(stick);
+      const elapsed = now - sStart;
+      const left = sLimit - elapsed;
+      
+      if (left <= 0) {
+        sd.textContent = '⏰ Time\'s up!';
+        sd.className = 'timer-value danger';
+        return;
+      }
+      
+      const hrs = Math.floor(left / 3600000);
+      const mins = Math.floor((left % 3600000) / 60000);
+      const secs = Math.floor((left % 60000) / 1000);
+      sd.textContent = `${hrs}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+      
+      // Progress bar (time elapsed)
+      const progress = Math.min(100, (elapsed / sLimit) * 100);
+      document.getElementById('progressFill').style.width = progress + '%';
+      
+      if (left < 300000) { sd.className = 'timer-value danger'; }
+      else if (left < 900000) { sd.className = 'timer-value warning'; }
+      else { sd.className = 'timer-value ok'; }
+      
+      requestAnimationFrame(sessionTick);
     }
-    stick();
+    sessionTick();
+    
   } catch(e) {
-    document.getElementById('info').innerHTML = `
+    document.getElementById('session-panel').style.display = 'block';
+    document.getElementById('active-session').style.display = 'none';
+    document.getElementById('challenge-panel').innerHTML = `
       <div class="no-session">
-        <div class="icon">🚀</div>
-        <p>No active session. Click <b>Start New Session</b> to begin your CKA practice!</p>
+        <div class="icon">📋</div>
+        <p>No active challenge.<br>Start a session to begin!</p>
       </div>
     `;
   }
 }
 load();
 
-async function post(path){
-  const res = await fetch(path,{method:'POST'});
-  if(!res.ok){ throw new Error(await res.text()); }
+async function post(path) {
+  const res = await fetch(path, {method:'POST'});
+  if (!res.ok) { throw new Error(await res.text()); }
   return res.json();
 }
 
@@ -320,26 +552,31 @@ function showMsg(msg, isError=false) {
 
 function setButtonsDisabled(disabled) {
   ['startBtn', 'resetBtn', 'doneBtn', 'nextBtn', 'syncBtn'].forEach(id => {
-    document.getElementById(id).disabled = disabled;
+    const el = document.getElementById(id);
+    if (el) el.disabled = disabled;
   });
 }
 
 let resetInProgress = false;
 
-document.getElementById('startBtn').onclick = async ()=>{
+document.getElementById('startBtn').onclick = async () => {
   if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
   showMsg('Starting session...');
-  try { await post('api/start-session'); showMsg('✓ Session started!'); load(); }
-  catch(err){ showMsg('Failed to start: '+err.message, true); }
+  try { 
+    await post('api/start-session'); 
+    showMsg('✓ Session started! Good luck!'); 
+    load(); 
+  }
+  catch(err) { showMsg('Failed to start: ' + err.message, true); }
 };
 
-document.getElementById('resetBtn').onclick = async ()=>{
+document.getElementById('resetBtn').onclick = async () => {
   if (!confirm('Reset the environment? This will delete and recreate clusters (~2 minutes).')) return;
   
   resetInProgress = true;
   setButtonsDisabled(true);
   
-  const RESET_TIME = 120; // seconds estimate
+  const RESET_TIME = 120;
   let remaining = RESET_TIME;
   
   const updateCountdown = () => {
@@ -354,15 +591,15 @@ document.getElementById('resetBtn').onclick = async ()=>{
     if (remaining >= 0) updateCountdown();
   }, 1000);
   
-  try { 
-    await post('api/reset'); 
+  try {
+    await post('api/reset');
     clearInterval(countdownInterval);
-    showMsg('✓ Environment reset complete! You can now start a new session.'); 
+    showMsg('✓ Environment reset complete!');
     load();
   }
-  catch(err){ 
+  catch(err) {
     clearInterval(countdownInterval);
-    showMsg('Failed to reset: '+err.message, true); 
+    showMsg('Failed to reset: ' + err.message, true);
   }
   finally {
     resetInProgress = false;
@@ -370,25 +607,36 @@ document.getElementById('resetBtn').onclick = async ()=>{
   }
 };
 
-document.getElementById('doneBtn').onclick = async ()=>{
+document.getElementById('doneBtn').onclick = async () => {
   if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
   showMsg('Grading challenge...');
-  try { await post('api/done'); showMsg('✓ Challenge graded! Check scoreboard for results.'); }
-  catch(err){ showMsg('Failed to grade: '+err.message, true); }
+  try { 
+    const result = await post('api/done'); 
+    showMsg('✓ Challenge graded! Moving to next...'); 
+    setTimeout(load, 500);
+  }
+  catch(err) { showMsg('Failed to grade: ' + err.message, true); }
 };
 
-document.getElementById('nextBtn').onclick = async ()=>{
+document.getElementById('nextBtn').onclick = async () => {
   if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
   showMsg('Loading next challenge...');
-  try { await post('api/next-challenge'); showMsg('✓ Next challenge loaded!'); load(); }
-  catch(err){ showMsg('Failed to load next: '+err.message, true); }
+  try { 
+    await post('api/next-challenge'); 
+    showMsg('✓ Next challenge loaded!'); 
+    load(); 
+  }
+  catch(err) { showMsg('Failed to load next: ' + err.message, true); }
 };
 
-document.getElementById('syncBtn').onclick = async ()=>{
+document.getElementById('syncBtn').onclick = async () => {
   if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
   showMsg('Syncing scoreboard...');
-  try { await post('api/sync-scoreboard'); showMsg('✓ Scoreboard synced!'); }
-  catch(err){ showMsg('Failed to sync: '+err.message, true); }
+  try { 
+    await post('api/sync-scoreboard'); 
+    showMsg('✓ Scoreboard synced!'); 
+  }
+  catch(err) { showMsg('Failed to sync: ' + err.message, true); }
 };
 </script>
 </body>

@@ -15,18 +15,28 @@ ENV['KUBECONFIG'] = KUBECONFIG_MERGED
 def status():
     cur = None
     meta = None
+    results = None
     if os.path.exists(SESSION_FILE):
         with open(SESSION_FILE) as f:
             cur = json.load(f)
     if os.path.exists(os.path.join(SCORE_DIR,'session.json')):
         with open(os.path.join(SCORE_DIR,'session.json')) as f:
             meta = json.load(f)
+    if os.path.exists(os.path.join(SCORE_DIR,'results.json')):
+        with open(os.path.join(SCORE_DIR,'results.json')) as f:
+            results = json.load(f)
     if cur:
         if meta:
             cur['sessionStart'] = meta.get('sessionStart')
-            cur['totalTimeLimitSeconds'] = meta.get('totalTimeLimitSeconds')
+            cur['totalTimeLimitSeconds'] = meta.get('totalTimeLimitSeconds', 7200)
             cur['total'] = meta.get('total', cur.get('total'))
             cur['index'] = cur.get('index', meta.get('currentIndex', 0))
+        # Add completed/passed counts from results
+        if results and meta:
+            session_id = meta.get('sessionId')
+            session_results = [r for r in results if r.get('sessionId') == session_id]
+            cur['completed'] = len(session_results)
+            cur['passed'] = len([r for r in session_results if r.get('pass')])
         return jsonify(cur)
     return jsonify({"status":"idle"})
 
