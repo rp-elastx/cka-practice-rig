@@ -312,32 +312,74 @@ function showMsg(msg, isError=false) {
   else { m.textContent = msg; e.textContent = ''; }
 }
 
+function setButtonsDisabled(disabled) {
+  ['startBtn', 'resetBtn', 'doneBtn', 'nextBtn', 'syncBtn'].forEach(id => {
+    document.getElementById(id).disabled = disabled;
+  });
+}
+
+let resetInProgress = false;
+
 document.getElementById('startBtn').onclick = async ()=>{
+  if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
   showMsg('Starting session...');
   try { await post('api/start-session'); showMsg('✓ Session started!'); load(); }
   catch(err){ showMsg('Failed to start: '+err.message, true); }
 };
 
 document.getElementById('resetBtn').onclick = async ()=>{
-  if (!confirm('Reset the environment? This will delete clusters and recreate them.')) return;
-  showMsg('Resetting environment...');
-  try { await post('api/reset'); showMsg('✓ Environment reset. Please wait a moment and refresh.'); }
-  catch(err){ showMsg('Failed to reset: '+err.message, true); }
+  if (!confirm('Reset the environment? This will delete and recreate clusters (~2 minutes).')) return;
+  
+  resetInProgress = true;
+  setButtonsDisabled(true);
+  
+  const RESET_TIME = 120; // seconds estimate
+  let remaining = RESET_TIME;
+  
+  const updateCountdown = () => {
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    showMsg(`🔄 Resetting environment... ${mins}:${secs.toString().padStart(2,'0')} remaining`);
+  };
+  updateCountdown();
+  
+  const countdownInterval = setInterval(() => {
+    remaining--;
+    if (remaining >= 0) updateCountdown();
+  }, 1000);
+  
+  try { 
+    await post('api/reset'); 
+    clearInterval(countdownInterval);
+    showMsg('✓ Environment reset complete! You can now start a new session.'); 
+    load();
+  }
+  catch(err){ 
+    clearInterval(countdownInterval);
+    showMsg('Failed to reset: '+err.message, true); 
+  }
+  finally {
+    resetInProgress = false;
+    setButtonsDisabled(false);
+  }
 };
 
 document.getElementById('doneBtn').onclick = async ()=>{
+  if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
   showMsg('Grading challenge...');
   try { await post('api/done'); showMsg('✓ Challenge graded! Check scoreboard for results.'); }
   catch(err){ showMsg('Failed to grade: '+err.message, true); }
 };
 
 document.getElementById('nextBtn').onclick = async ()=>{
+  if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
   showMsg('Loading next challenge...');
   try { await post('api/next-challenge'); showMsg('✓ Next challenge loaded!'); load(); }
   catch(err){ showMsg('Failed to load next: '+err.message, true); }
 };
 
 document.getElementById('syncBtn').onclick = async ()=>{
+  if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
   showMsg('Syncing scoreboard...');
   try { await post('api/sync-scoreboard'); showMsg('✓ Scoreboard synced!'); }
   catch(err){ showMsg('Failed to sync: '+err.message, true); }
