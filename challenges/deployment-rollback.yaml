@@ -1,0 +1,20 @@
+id: deployment-rollback
+title: "Perform deployment rollout and rollback"
+category: deployment
+namespace: rollout-chal
+cluster: cka-c
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-rollout.sh
+grade: ../grading/grade-rollout.sh
+description: |
+  In namespace 'rollout-chal' on cluster cka-c:
+  1. A Deployment 'webapp' exists running nginx:1.23
+  2. Update the deployment to use nginx:1.24, record the change
+  3. Check rollout status and wait for completion
+  4. View rollout history of the deployment
+  5. Something is wrong! Rollback to the previous revision
+  6. Verify the rollback completed and pods are running nginx:1.23
+  7. Scale the deployment to 5 replicas
+  8. Save rollout history to /tmp/rollout-history.txt
+  
+  Hint: Use kubectl rollout status, history, undo, and set image

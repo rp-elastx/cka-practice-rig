@@ -1,0 +1,20 @@
+id: jsonpath-sort-output
+title: "Use JSONPath to extract and sort Kubernetes data"
+category: troubleshooting
+namespace: ""
+cluster: cka-a
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-jsonpath.sh
+grade: ../grading/grade-jsonpath.sh
+description: |
+  On cluster cka-a, use kubectl with JSONPath and sorting:
+  1. List all nodes sorted by .metadata.creationTimestamp, output just node names
+     Save to /tmp/nodes-by-age.txt
+  2. List all pods in kube-system namespace, sorted by .status.startTime
+     Output format: POD_NAME  STATUS  Save to /tmp/pods-by-start.txt
+  3. Find all pods with label 'app=web' across all namespaces using JSONPath
+     Output format: NAMESPACE/POD_NAME  Save to /tmp/web-pods.txt
+  4. Get the internal IP of all nodes using JSONPath
+     Save to /tmp/node-ips.txt
+  
+  Hint: Use -o jsonpath='{...}' and --sort-by=...

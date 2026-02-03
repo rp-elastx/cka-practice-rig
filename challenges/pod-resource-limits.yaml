@@ -1,0 +1,20 @@
+id: pod-resource-limits
+title: "Configure resource requests and limits on pods"
+category: deployment
+namespace: resources-chal
+cluster: cka-a
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-resources.sh
+grade: ../grading/grade-resources.sh
+description: |
+  In namespace 'resources-chal' on cluster cka-a:
+  1. Create a Pod 'resource-pod' with image nginx:1.24 that has:
+     - CPU request: 100m, CPU limit: 200m
+     - Memory request: 128Mi, Memory limit: 256Mi
+  2. Create a LimitRange 'default-limits' that sets:
+     - Default CPU limit: 500m, Default memory limit: 512Mi
+     - Default CPU request: 250m, Default memory request: 256Mi
+  3. Create a Pod 'auto-limits' with image nginx:1.24 (no explicit limits)
+     Verify it gets the default limits from LimitRange
+  4. Create a ResourceQuota 'ns-quota' limiting:
+     - Max 4 pods, 2 CPU, 2Gi memory in the namespace

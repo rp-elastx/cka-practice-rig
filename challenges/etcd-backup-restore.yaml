@@ -1,0 +1,14 @@
+id: etcd-backup-restore
+title: "Backup and Restore etcd cluster data"
+category: cluster
+namespace: ""
+cluster: cka-a
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-etcd.sh
+grade: ../grading/grade-etcd.sh
+description: |
+  On cluster cka-a, perform a backup of etcd to /tmp/etcd-backup.db using etcdctl snapshot.
+  Then restore the snapshot to a new data directory /var/lib/etcd-restored.
+  Verify the backup file exists and contains valid data.
+  
+  Hint: Use ETCDCTL_API=3 and locate the etcd certificates in /etc/kubernetes/pki/etcd/

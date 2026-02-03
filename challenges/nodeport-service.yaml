@@ -1,0 +1,18 @@
+id: nodeport-service
+title: "Expose deployment via NodePort and verify connectivity"
+category: service
+namespace: svc-chal
+cluster: cka-b
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-nodeport.sh
+grade: ../grading/grade-nodeport.sh
+description: |
+  In namespace 'svc-chal' on cluster cka-b:
+  1. A Deployment 'webapp' exists with pods running nginx on port 80
+  2. Create a Service 'webapp-nodeport' of type NodePort that:
+     - Targets pods with label app=webapp
+     - Maps port 80 to targetPort 80
+     - Uses nodePort 30080
+  3. Create a ClusterIP Service 'webapp-internal' for internal access on port 8080
+  4. Verify you can access the service via NodePort from any node
+  5. Create an ExternalName Service 'external-db' that points to db.example.com

@@ -1,0 +1,20 @@
+id: taint-toleration
+title: "Configure node taints and pod tolerations"
+category: deployment
+namespace: taint-chal
+cluster: cka-a
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-taint.sh
+grade: ../grading/grade-taint.sh
+description: |
+  On cluster cka-a:
+  1. Add taint 'dedicated=gpu:NoSchedule' to node 'cka-a-worker'
+  2. Add taint 'maintenance=true:NoExecute' with tolerationSeconds=300 to same node
+  3. Create a Pod 'gpu-pod' with toleration for 'dedicated=gpu:NoSchedule'
+     that can schedule on the tainted node
+  4. Create a Deployment 'tolerant-app' with 2 replicas that tolerates both taints
+  5. Verify pods with no tolerations cannot schedule on the tainted node
+  6. Remove the 'maintenance' taint from the node
+  7. List all taints on all nodes, save to /tmp/node-taints.txt
+  
+  Hint: kubectl taint nodes <node> key=value:effect

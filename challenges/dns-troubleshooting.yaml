@@ -1,0 +1,20 @@
+id: dns-troubleshooting
+title: "Troubleshoot and verify DNS resolution in cluster"
+category: troubleshooting
+namespace: dns-chal
+cluster: cka-c
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-dns.sh
+grade: ../grading/grade-dns.sh
+description: |
+  In namespace 'dns-chal' on cluster cka-c:
+  1. Verify CoreDNS is running in kube-system namespace
+  2. Create a pod 'dns-test' with image busybox:1.36 that sleeps
+  3. From the pod, verify DNS resolution works for:
+     - kubernetes.default.svc.cluster.local
+     - A service 'web-svc' in the same namespace
+     - A service in another namespace (kube-dns.kube-system.svc.cluster.local)
+  4. Save the resolved IP addresses to /tmp/dns-results.txt
+  5. Check the pod's /etc/resolv.conf and save the nameserver to /tmp/dns-server.txt
+  
+  Hint: Use nslookup or host command inside the pod

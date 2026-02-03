@@ -1,0 +1,20 @@
+id: node-affinity-selector
+title: "Schedule pods using nodeSelector and nodeAffinity"
+category: deployment
+namespace: affinity-chal
+cluster: cka-b
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-affinity.sh
+grade: ../grading/grade-affinity.sh
+description: |
+  On cluster cka-b:
+  1. Label node 'cka-b-worker' with 'disktype=ssd' and 'zone=east'
+  2. Create a Pod 'ssd-pod' using nodeSelector to schedule only on disktype=ssd nodes
+  3. Create a Deployment 'zone-app' with 3 replicas using nodeAffinity:
+     - Required: must run on nodes with zone=east
+     - Preferred: prefer nodes with disktype=ssd (weight 100)
+  4. Create a Pod 'anti-affinity-pod' that must NOT run on the same node as pods 
+     with label app=zone-app (using podAntiAffinity)
+  5. Verify all pods are scheduled correctly
+  
+  Hint: Use requiredDuringSchedulingIgnoredDuringExecution

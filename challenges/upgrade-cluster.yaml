@@ -1,0 +1,17 @@
+id: upgrade-cluster
+title: "Upgrade a Kubernetes cluster control plane"
+category: cluster
+namespace: ""
+cluster: cka-c
+timeLimitSeconds: 1200
+setup: ../scripts/challenges/setup-upgrade.sh
+grade: ../grading/grade-upgrade.sh
+description: |
+  On cluster cka-c, upgrade the control plane components from the current version to the next minor version.
+  1. Check current cluster version with kubectl version
+  2. Plan the upgrade using kubeadm upgrade plan
+  3. Apply the upgrade on the control plane node
+  4. Upgrade kubelet and kubectl on the control plane node
+  5. Verify the cluster is healthy after upgrade
+  
+  Note: In kind clusters, simulate by documenting the upgrade steps in /tmp/upgrade-plan.txt

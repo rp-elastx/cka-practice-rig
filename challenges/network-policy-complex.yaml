@@ -1,0 +1,20 @@
+id: network-policy-complex
+title: "Implement complex NetworkPolicy rules"
+category: networkpolicy
+namespace: netpol-complex
+cluster: cka-b
+timeLimitSeconds: 900
+setup: ../scripts/challenges/setup-netpol-complex.sh
+grade: ../grading/grade-netpol-complex.sh
+description: |
+  In namespace 'netpol-complex' on cluster cka-b:
+  1. Create a default deny all ingress NetworkPolicy for the namespace
+  2. Create NetworkPolicy 'allow-frontend' that:
+     - Allows ingress to pods with label 'tier=frontend' from any source
+  3. Create NetworkPolicy 'backend-policy' that:
+     - Allows ingress to pods with label 'tier=backend' only from 'tier=frontend' pods
+     - Allows egress from 'tier=backend' only to 'tier=database' pods on port 5432
+  4. Create NetworkPolicy 'database-policy' that:
+     - Allows ingress to 'tier=database' only from 'tier=backend' on port 5432
+     - Denies all egress from database pods
+  5. Test connectivity and verify policies work as expected

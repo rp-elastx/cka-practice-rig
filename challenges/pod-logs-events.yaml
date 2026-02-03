@@ -1,0 +1,21 @@
+id: pod-logs-events
+title: "Analyze pod logs and cluster events for troubleshooting"
+category: troubleshooting
+namespace: logs-chal
+cluster: cka-a
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-logs.sh
+grade: ../grading/grade-logs.sh
+description: |
+  In namespace 'logs-chal' on cluster cka-a:
+  1. Find pods that have restarted more than 2 times and save their names to /tmp/restart-pods.txt
+  2. Get the last 50 lines of logs from pod 'web-server' container 'nginx' 
+     and save to /tmp/nginx-logs.txt
+  3. Get logs from the previous instance of container 'app' in pod 'failing-app'
+     and save to /tmp/previous-logs.txt  
+  4. List all Warning events in the namespace sorted by lastTimestamp
+     Save to /tmp/warning-events.txt
+  5. Find the pod consuming the most CPU in the namespace
+     Save pod name to /tmp/top-cpu-pod.txt
+  
+  Hint: Use kubectl logs, kubectl top, kubectl get events

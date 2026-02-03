@@ -1,0 +1,20 @@
+id: static-pod
+title: "Create and manage static pods on a node"
+category: cluster
+namespace: ""
+cluster: cka-b
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-static-pod.sh
+grade: ../grading/grade-static-pod.sh
+description: |
+  On cluster cka-b:
+  1. Identify the static pod manifest directory on the control plane node
+     (typically /etc/kubernetes/manifests)
+  2. Create a static pod manifest 'static-web.yaml' that runs nginx:1.24 
+     with name 'static-web' in namespace 'default'
+  3. Verify the static pod is created and Running
+  4. Find all static pods in the cluster (they have node name in their pod name)
+     Save the list to /tmp/static-pods.txt
+  5. Document the static pod path in /tmp/static-pod-path.txt
+  
+  Hint: Static pods are managed by kubelet directly from manifest files

@@ -1,0 +1,16 @@
+id: node-drain-cordon
+title: "Drain a node, perform maintenance, and uncordon"
+category: cluster
+namespace: drain-chal
+cluster: cka-b
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-drain.sh
+grade: ../grading/grade-drain.sh
+description: |
+  On cluster cka-b, a worker node needs maintenance.
+  1. Mark node 'cka-b-worker' as unschedulable (cordon)
+  2. Safely evict all pods from the node (drain), ignoring DaemonSets
+  3. After verifying no user workloads remain, mark the node as schedulable again (uncordon)
+  4. Verify the node is Ready and schedulable
+  
+  Hint: Use kubectl drain with --ignore-daemonsets and --delete-emptydir-data flags

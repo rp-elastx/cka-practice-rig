@@ -1,0 +1,20 @@
+id: multi-container-pod
+title: "Create multi-container pod with init container"
+category: deployment
+namespace: multi-chal
+cluster: cka-a
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-multi.sh
+grade: ../grading/grade-multi.sh
+description: |
+  In namespace 'multi-chal' on cluster cka-a:
+  1. Create a Pod 'web-with-init' with:
+     - An init container 'init-data' using busybox:1.36 that creates file 
+       /work-dir/index.html with content "Hello from init"
+     - A main container 'nginx' using nginx:1.24 serving from /usr/share/nginx/html
+     - Both containers share volume 'workdir' (emptyDir)
+  2. Create a Pod 'sidecar-logger' with:
+     - Main container 'app' running busybox, writing to /var/log/app.log every 5 sec
+     - Sidecar container 'logger' running busybox, tailing /var/log/app.log
+     - Shared volume 'logs' mounted at /var/log in both containers
+  3. Verify init container completes before main container starts

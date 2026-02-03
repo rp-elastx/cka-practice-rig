@@ -1,0 +1,17 @@
+id: pv-reclaim-policy
+title: "Configure PersistentVolume reclaim policies"
+category: storage
+namespace: pv-chal
+cluster: cka-c
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-pv-policy.sh
+grade: ../grading/grade-pv-policy.sh
+description: |
+  In namespace 'pv-chal' on cluster cka-c:
+  1. Create a PersistentVolume 'pv-retain' with 1Gi capacity, hostPath /data/retain,
+     and reclaimPolicy: Retain
+  2. Create a PersistentVolume 'pv-delete' with 1Gi capacity, hostPath /data/delete,
+     and reclaimPolicy: Delete
+  3. Create matching PVCs 'pvc-retain' and 'pvc-delete' that bind to the respective PVs
+  4. Verify both PVCs are Bound
+  5. Edit existing PV 'pv-existing' to change its reclaimPolicy from Delete to Retain

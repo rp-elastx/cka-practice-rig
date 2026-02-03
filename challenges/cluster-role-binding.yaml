@@ -1,0 +1,16 @@
+id: cluster-role-binding
+title: "Create ClusterRole and ClusterRoleBinding for cluster-wide access"
+category: rbac
+namespace: ""
+cluster: cka-a
+timeLimitSeconds: 600
+setup: ../scripts/challenges/setup-clusterrole.sh
+grade: ../grading/grade-clusterrole.sh
+description: |
+  On cluster cka-a:
+  1. Create a ClusterRole 'node-reader' that allows get, list, watch on nodes
+  2. Create a ClusterRole 'pv-manager' that allows all verbs on persistentvolumes
+  3. Bind 'node-reader' to ServiceAccount 'monitoring' in namespace 'ops' using ClusterRoleBinding 'monitor-nodes'
+  4. Bind 'pv-manager' to User 'storage-admin' using ClusterRoleBinding 'storage-admin-pv'
+  
+  Verify with: kubectl auth can-i list nodes --as system:serviceaccount:ops:monitoring
