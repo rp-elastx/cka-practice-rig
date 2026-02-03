@@ -8,9 +8,9 @@ for c in "${CLUSTERS[@]}"; do
   kind delete cluster --name "$c" || true
 done
 
-echo "[reset] Cleaning kubeconfigs and session/scoreboard"
+echo "[reset] Cleaning kubeconfigs and current session (preserving scoreboard history)"
 rm -f "$REPO_DIR"/kubeconfigs/*.yaml || true
 rm -f "$REPO_DIR"/scoreboard/current-session.json || true
-rm -f "$REPO_DIR"/scoreboard/results.json || true
+# Note: results.json is preserved to keep scoreboard history
 
 echo "[reset] Done. Run scripts/setup.sh to start fresh."
