@@ -48,12 +48,15 @@ server {
     proxy_pass http://127.0.0.1:3000/;
   }
 
-  # Control API proxy
+  # Control API proxy - increased timeout for reset operation (~2 min)
   location $BASE_PATH/api/ {
     auth_basic "CKA Practice";
     auth_basic_user_file $HTPASSWD;
     proxy_http_version 1.1;
     proxy_pass http://127.0.0.1:5005/api/;
+    proxy_read_timeout 300s;
+    proxy_connect_timeout 300s;
+    proxy_send_timeout 300s;
   }
 
   # Root of base path -> session page
