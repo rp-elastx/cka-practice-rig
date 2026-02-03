@@ -58,7 +58,7 @@ docker run -d \
   -e NO_PROXY=localhost,127.0.0.1,$HOST_IP \
   --restart unless-stopped \
   $MOUNTS \
-  lscr.io/linuxserver/webtop:alpine
+  lscr.io/linuxserver/webtop:latest
 
 # Wait for container to start
 sleep 3
