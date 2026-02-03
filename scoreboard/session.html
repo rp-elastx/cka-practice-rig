@@ -112,6 +112,16 @@ nextBtn.onclick = async ()=>{
   try { await post('api/next-challenge'); m.textContent='Next challenge loaded.'; load(); }
   catch(err){ e.textContent='Failed to go next: '+err.message; m.textContent=''; }
 };
+
+// Sync Scoreboard button
+const syncBtn=document.createElement('button'); syncBtn.textContent='Sync Scoreboard';
+actions.appendChild(syncBtn);
+
+syncBtn.onclick = async ()=>{
+  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Syncing scoreboard...';e.textContent='';
+  try { await post('api/sync-scoreboard'); m.textContent='Scoreboard synced. View it in the Scoreboard link.'; }
+  catch(err){ e.textContent='Failed to sync: '+err.message; m.textContent=''; }
+};
 </script>
 </body>
 </html>

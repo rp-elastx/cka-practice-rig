@@ -65,5 +65,13 @@ def next_challenge():
     except subprocess.CalledProcessError as e:
         return jsonify({"error":"failed to load next","detail":str(e)}), 500
 
+@app.post('/api/sync-scoreboard')
+def sync_scoreboard():
+    try:
+        subprocess.check_call(['rsync', '-a', SCORE_DIR + '/', '/var/www/cka-practice/scoreboard/'])
+        return jsonify({"status":"synced"})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error":"failed to sync","detail":str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5005)
