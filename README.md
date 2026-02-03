@@ -32,13 +32,18 @@ The installer will:
 
 | URL | Description |
 |-----|-------------|
-| `https://<ip>/cka-training/session.html` | Main session page |
-| `https://<ip>/cka-training/desktop/` | Web desktop (browser + terminal) |
+| `https://<ip>/` | Landing page (Start Training button) |
+| `https://<ip>/cka-training/session.html` | Session page with embedded desktop |
 | `https://<ip>/cka-training/scoreboard/` | Results scoreboard |
 
 **Credentials:** `cka` / `cka`
 
 > **Note:** Self-signed SSL certificate - browser will show security warning.
+
+For production use with a domain:
+```bash
+bash scripts/webgui/setup-ssl.sh yourdomain.com
+```
 
 ## Change Passwords (Recommended)
 
