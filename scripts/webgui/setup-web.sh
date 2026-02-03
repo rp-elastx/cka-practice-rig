@@ -20,7 +20,7 @@ After=network.target
 User=%i
 Group=%i
 WorkingDirectory=/home/%i
-ExecStart=/usr/bin/ttyd -p 7681 -t title:"CKA Terminal" -t fontSize=14 -t disableLeaveAlert=true bash -lc 'cd ~/cka-practice-rig && exec bash'
+ExecStart=/usr/bin/ttyd -p 7681 -t fontSize=14 bash -lc 'cd ~/cka-practice-rig && exec bash'
 Restart=always
 RestartSec=2
 
