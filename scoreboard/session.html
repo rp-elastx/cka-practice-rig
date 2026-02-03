@@ -6,76 +6,91 @@
 <title>CKA Practice Session</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  min-height: 100vh;
   color: #fff;
 }
 .layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
 }
 .sidebar {
-  width: 400px;
-  min-width: 350px;
-  background: rgba(0, 0, 0, 0.3);
+  width: 380px;
+  min-width: 320px;
+  background: rgba(0, 0, 0, 0.4);
   border-right: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 1.5rem;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
-.main {
-  flex: 1;
-  padding: 1.5rem 2rem;
-  overflow-y: auto;
-}
-.header {
+.sidebar-header {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
-.header .logo { font-size: 2rem; }
-h1 {
-  font-size: 1.4rem;
+.sidebar-header .logo { font-size: 1.5rem; }
+.sidebar-header h1 {
+  font-size: 1.1rem;
   font-weight: 300;
 }
-h1 span { font-weight: 700; color: #326ce5; }
-.card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
+.sidebar-header h1 span { font-weight: 700; color: #326ce5; }
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
 }
-.card-title {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #888;
-  margin-bottom: 0.75rem;
+.timer-bar {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
 }
+.timer-label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
+.timer-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+.timer-value.ok { color: #2ecc71; }
+.timer-value.warning { color: #f39c12; }
+.timer-value.danger { color: #e74c3c; }
+.stats-bar {
+  display: flex;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+.stat { text-align: center; flex: 1; }
+.stat-value { font-size: 1.2rem; font-weight: 700; color: #326ce5; }
+.stat-label { font-size: 0.65rem; color: #888; text-transform: uppercase; }
+.challenge-section { margin-bottom: 1rem; }
 .challenge-title {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #326ce5;
   margin-bottom: 0.5rem;
 }
 .challenge-meta {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
   flex-wrap: wrap;
 }
 .meta-item {
   background: rgba(255, 255, 255, 0.1);
-  padding: 0.35rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
 }
 .meta-item code {
   color: #2ecc71;
@@ -84,309 +99,204 @@ h1 span { font-weight: 700; color: #326ce5; }
 .description-box {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 8px;
-  padding: 1rem;
-  font-size: 0.9rem;
-  line-height: 1.7;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
   white-space: pre-wrap;
   color: #ddd;
-  flex: 1;
+  max-height: 250px;
   overflow-y: auto;
 }
-.docs-section {
-  margin-top: 1rem;
-}
-.docs-title {
-  font-size: 0.8rem;
+.section-title {
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: #888;
-  margin-bottom: 0.5rem;
+  margin: 1rem 0 0.5rem 0;
 }
 .docs-links {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.35rem;
 }
-.docs-links a {
+.doc-link {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #326ce5;
+  color: #aaa;
   text-decoration: none;
-  padding: 0.5rem 0.75rem;
+  padding: 0.4rem 0.6rem;
   background: rgba(50, 108, 229, 0.1);
   border-radius: 6px;
-  font-size: 0.85rem;
-  transition: background 0.2s;
+  font-size: 0.8rem;
+  transition: all 0.2s;
 }
-.docs-links a:hover {
-  background: rgba(50, 108, 229, 0.2);
-}
-.timer-display {
-  text-align: center;
-  padding: 1.5rem;
-}
-.timer-label {
-  font-size: 0.85rem;
-  color: #888;
-  margin-bottom: 0.5rem;
-}
-.timer-value {
-  font-size: 3rem;
-  font-weight: 700;
-  font-family: 'Monaco', 'Menlo', monospace;
-}
-.timer-value.ok { color: #2ecc71; }
-.timer-value.warning { color: #f39c12; }
-.timer-value.danger { color: #e74c3c; }
-.progress-bar {
-  margin-top: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  height: 8px;
+.doc-link:hover { background: rgba(50, 108, 229, 0.2); color: #fff; }
+.doc-link .url {
+  flex: 1;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+  color: #326ce5;
 }
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #326ce5, #2ecc71);
-  transition: width 0.3s;
-}
-.progress-text {
-  text-align: center;
-  margin-top: 0.5rem;
-  font-size: 0.85rem;
+.copy-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
   color: #888;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.7rem;
 }
-.actions {
+.copy-btn:hover { background: rgba(255,255,255,0.2); color: #fff; }
+.copy-btn.copied { background: #27ae60; color: #fff; }
+.actions-bar {
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 .btn {
-  padding: 0.75rem 1.25rem;
-  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
   font-weight: 600;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.3rem;
 }
-.btn-primary {
-  background: linear-gradient(135deg, #326ce5 0%, #1e4db7 100%);
-  color: #fff;
-  box-shadow: 0 2px 10px rgba(50, 108, 229, 0.3);
-}
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(50, 108, 229, 0.4);
-}
-.btn-success {
-  background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
-  color: #fff;
-}
-.btn-success:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
-}
-.btn-warning {
-  background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
-  color: #fff;
-}
-.btn-warning:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
-}
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-.btn-danger {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-  color: #fff;
-}
-.btn-danger:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
-}
-.btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-.btn-lg {
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-}
-.quick-links {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-.quick-link {
-  color: #326ce5;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  font-size: 0.9rem;
-  background: rgba(50, 108, 229, 0.1);
-  border-radius: 6px;
-}
-.quick-link:hover {
-  background: rgba(50, 108, 229, 0.2);
-}
+.btn-success { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); color: #fff; }
+.btn-warning { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); color: #fff; }
+.btn-secondary { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+.btn-danger { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: #fff; }
+.btn-primary { background: linear-gradient(135deg, #326ce5 0%, #1e4db7 100%); color: #fff; }
+.btn:hover { transform: translateY(-1px); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-sm { padding: 0.35rem 0.5rem; font-size: 0.7rem; }
 .message {
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-}
-.message.success {
-  background: rgba(39, 174, 96, 0.2);
-  border: 1px solid rgba(39, 174, 96, 0.3);
-  color: #2ecc71;
-}
-.message.error {
-  background: rgba(231, 76, 60, 0.2);
-  border: 1px solid rgba(231, 76, 60, 0.3);
-  color: #e74c3c;
-}
-.message:empty { display: none; }
-.no-session {
-  text-align: center;
-  padding: 3rem 1rem;
-  color: #888;
-}
-.no-session .icon { font-size: 4rem; margin-bottom: 1rem; }
-.no-session h2 { color: #fff; margin-bottom: 0.5rem; }
-.stats-row {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-.stat-card {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 1rem;
-  text-align: center;
-}
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #326ce5;
-}
-.stat-label {
+  padding: 0.5rem;
+  border-radius: 6px;
   font-size: 0.8rem;
-  color: #888;
-  text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
-.back-link {
+.message.success { background: rgba(39,174,96,0.2); border: 1px solid rgba(39,174,96,0.3); color: #2ecc71; }
+.message.error { background: rgba(231,76,60,0.2); border: 1px solid rgba(231,76,60,0.3); color: #e74c3c; }
+.message:empty { display: none; }
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+}
+.desktop-frame {
+  flex: 1;
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+.no-session {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   color: #888;
+  text-align: center;
+  padding: 2rem;
+}
+.no-session .icon { font-size: 3rem; margin-bottom: 1rem; }
+.no-session h2 { color: #fff; margin-bottom: 0.5rem; font-size: 1.2rem; }
+.no-session p { margin-bottom: 1rem; font-size: 0.9rem; }
+.toggle-sidebar {
+  position: fixed;
+  left: 380px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 0.5rem 0.25rem;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+  z-index: 100;
+  font-size: 0.8rem;
+}
+.toggle-sidebar:hover { background: rgba(50,108,229,0.5); }
+.sidebar.collapsed { width: 0; min-width: 0; padding: 0; overflow: hidden; }
+.sidebar.collapsed + .main .toggle-sidebar { left: 0; }
+.back-link {
+  color: #666;
   text-decoration: none;
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
-  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+  display: block;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .back-link:hover { color: #326ce5; }
-@media (max-width: 900px) {
-  .layout { flex-direction: column; }
-  .sidebar { width: 100%; min-width: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
-}
 </style>
 </head>
 <body>
 <div class="layout">
-  <div class="sidebar">
-    <div class="header">
-      <div class="logo">☸️</div>
-      <h1>CKA <span>Practice</span></h1>
+  <div class="sidebar" id="sidebar">
+    <a href="/" class="back-link">← Back to Home</a>
+    
+    <div class="timer-bar">
+      <div>
+        <div class="timer-label">⏱️ Time Remaining</div>
+        <div class="timer-value ok" id="sessionCountdown">2:00:00</div>
+      </div>
+      <a href="scoreboard/index.html" target="_blank" class="btn btn-sm btn-secondary">📊</a>
     </div>
     
-    <div id="challenge-panel">
-      <div class="no-session">
-        <div class="icon">📋</div>
-        <p>Loading...</p>
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-value" id="currentNum">-</div>
+        <div class="stat-label">Current</div>
       </div>
+      <div class="stat">
+        <div class="stat-value" id="completedCount">0</div>
+        <div class="stat-label">Done</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="passedCount">0</div>
+        <div class="stat-label">Passed</div>
+      </div>
+    </div>
+    
+    <div class="sidebar-content">
+      <div id="actionMsg" class="message success"></div>
+      <div id="errorMsg" class="message error"></div>
+      
+      <div id="challenge-panel">
+        <div class="no-session">
+          <div class="icon">📋</div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="actions-bar" id="actions-bar">
+      <button id="startBtn" class="btn btn-primary">▶ Start Session</button>
+      <button id="doneBtn" class="btn btn-success" style="display:none;">✓ Grade</button>
+      <button id="nextBtn" class="btn btn-warning" style="display:none;">→ Next</button>
+      <button id="resetBtn" class="btn btn-danger btn-sm" style="display:none;">⟲ Reset</button>
     </div>
   </div>
   
+  <button class="toggle-sidebar" id="toggleBtn">◀</button>
+  
   <div class="main">
-    <a href="/" class="back-link">← Back to Home</a>
-    
-    <div id="actionMsg" class="message success"></div>
-    <div id="errorMsg" class="message error"></div>
-    
-    <div id="session-panel">
-      <div class="no-session">
-        <div class="icon">🚀</div>
-        <h2>Ready to Practice?</h2>
-        <p>Start a 2-hour timed session and complete as many challenges as you can!</p>
-        <br>
-        <button id="startBtn" class="btn btn-primary btn-lg">▶ Start New Session</button>
-      </div>
-    </div>
-    
-    <div id="active-session" style="display:none;">
-      <div class="card">
-        <div class="timer-display">
-          <div class="timer-label">⏱️ Session Time Remaining</div>
-          <div class="timer-value ok" id="sessionCountdown">2:00:00</div>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-        </div>
-        <div class="progress-text" id="progressText">0 / 0 challenges completed</div>
-      </div>
-      
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-value" id="completedCount">0</div>
-          <div class="stat-label">Completed</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="passedCount">0</div>
-          <div class="stat-label">Passed</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="currentNum">1</div>
-          <div class="stat-label">Current</div>
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="card-title">🎮 Actions</div>
-        <div class="actions">
-          <button id="doneBtn" class="btn btn-success">✓ Submit & Grade</button>
-          <button id="nextBtn" class="btn btn-warning">→ Next Challenge</button>
-          <button id="syncBtn" class="btn btn-secondary">↻ Sync Scoreboard</button>
-        </div>
-      </div>
-      
-      <div class="card">
-        <div class="card-title">🔗 Quick Links</div>
-        <div class="quick-links">
-          <a href="desktop/" target="_blank" class="quick-link">🖥️ Desktop</a>
-          <a href="scoreboard/index.html" target="_blank" class="quick-link">📊 Scoreboard</a>
-          <button id="resetBtn" class="btn btn-danger" style="margin-left:auto;">⟲ Reset Environment</button>
-        </div>
-      </div>
-    </div>
+    <iframe id="desktopFrame" class="desktop-frame" src="about:blank"></iframe>
   </div>
 </div>
 
 <script>
-// Documentation links mapping by challenge topic
 const docsMap = {
   'pod': ['https://kubernetes.io/docs/concepts/workloads/pods/', 'Pods'],
   'deployment': ['https://kubernetes.io/docs/concepts/workloads/controllers/deployment/', 'Deployments'],
@@ -439,61 +349,74 @@ const docsMap = {
 function getDocsForChallenge(challengeId, title, description) {
   const links = [];
   const text = (challengeId + ' ' + title + ' ' + description).toLowerCase();
-  
   for (const [keyword, [url, label]] of Object.entries(docsMap)) {
     if (text.includes(keyword) && !links.find(l => l.url === url)) {
       links.push({ url, label });
     }
   }
-  
-  // Always add kubectl cheatsheet
   links.push({ url: 'https://kubernetes.io/docs/reference/kubectl/quick-reference/', label: 'kubectl Cheat Sheet' });
-  
-  return links.slice(0, 5); // Max 5 links
+  return links.slice(0, 6);
 }
 
-let sessionData = null;
+function copyToClipboard(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = '✓';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋';
+      btn.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+let sessionActive = false;
 
 async function load() {
   try {
     const r = await fetch('api/status?ts='+Date.now());
     if (!r.ok) throw new Error('No session');
     const s = await r.json();
-    sessionData = s;
     
-    // Show active session UI
-    document.getElementById('session-panel').style.display = 'none';
-    document.getElementById('active-session').style.display = 'block';
+    sessionActive = true;
+    document.getElementById('startBtn').style.display = 'none';
+    document.getElementById('doneBtn').style.display = '';
+    document.getElementById('nextBtn').style.display = '';
+    document.getElementById('resetBtn').style.display = '';
     
-    // Get documentation links
+    // Load desktop if not already loaded
+    const frame = document.getElementById('desktopFrame');
+    if (frame.src === 'about:blank' || !frame.src.includes('desktop')) {
+      frame.src = 'desktop/';
+    }
+    
     const docs = getDocsForChallenge(s.challengeId, s.title, s.description || '');
-    const docsHtml = docs.map(d => 
-      `<a href="${d.url}" target="_blank">📖 ${d.label}</a>`
-    ).join('');
+    const docsHtml = docs.map(d => `
+      <div class="doc-link">
+        <span>📖</span>
+        <span class="url" title="${d.url}">${d.label}</span>
+        <button class="copy-btn" onclick="copyToClipboard('${d.url}', this)" title="Copy URL to paste in desktop browser">📋</button>
+      </div>
+    `).join('');
     
-    // Update challenge panel
     document.getElementById('challenge-panel').innerHTML = `
-      <div class="challenge-title">${s.title}</div>
-      <div class="challenge-meta">
-        <span class="meta-item">Context: <code>${s.context}</code></span>
-        <span class="meta-item">NS: <code>${s.namespace}</code></span>
+      <div class="challenge-section">
+        <div class="challenge-title">${s.title}</div>
+        <div class="challenge-meta">
+          <span class="meta-item">ctx: <code>${s.context}</code></span>
+          <span class="meta-item">ns: <code>${s.namespace}</code></span>
+        </div>
+        <div class="description-box">${s.description || 'No description available.'}</div>
       </div>
-      <div class="description-box">${s.description || 'No description available.'}</div>
-      <div class="docs-section">
-        <div class="docs-title">📚 Relevant Documentation</div>
-        <div class="docs-links">${docsHtml}</div>
-      </div>
+      <div class="section-title">📚 Documentation (click 📋 to copy URL)</div>
+      <div class="docs-links">${docsHtml}</div>
     `;
     
-    // Update stats
     document.getElementById('currentNum').textContent = (s.index || 0) + 1;
     document.getElementById('completedCount').textContent = s.completed || 0;
     document.getElementById('passedCount').textContent = s.passed || 0;
-    document.getElementById('progressText').textContent = `${s.completed || 0} challenges completed`;
     
-    // Session countdown (2 hours)
     const sStart = s.sessionStart ? new Date(s.sessionStart).getTime() : Date.now();
-    const sLimit = (s.totalTimeLimitSeconds || 7200) * 1000; // 2 hours default
+    const sLimit = (s.totalTimeLimitSeconds || 7200) * 1000;
     const sd = document.getElementById('sessionCountdown');
     
     function sessionTick() {
@@ -502,7 +425,7 @@ async function load() {
       const left = sLimit - elapsed;
       
       if (left <= 0) {
-        sd.textContent = '⏰ Time\'s up!';
+        sd.textContent = "⏰ Time's up!";
         sd.className = 'timer-value danger';
         return;
       }
@@ -511,10 +434,6 @@ async function load() {
       const mins = Math.floor((left % 3600000) / 60000);
       const secs = Math.floor((left % 60000) / 1000);
       sd.textContent = `${hrs}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-      
-      // Progress bar (time elapsed)
-      const progress = Math.min(100, (elapsed / sLimit) * 100);
-      document.getElementById('progressFill').style.width = progress + '%';
       
       if (left < 300000) { sd.className = 'timer-value danger'; }
       else if (left < 900000) { sd.className = 'timer-value warning'; }
@@ -525,17 +444,35 @@ async function load() {
     sessionTick();
     
   } catch(e) {
-    document.getElementById('session-panel').style.display = 'block';
-    document.getElementById('active-session').style.display = 'none';
+    sessionActive = false;
+    document.getElementById('startBtn').style.display = '';
+    document.getElementById('doneBtn').style.display = 'none';
+    document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('resetBtn').style.display = 'none';
+    document.getElementById('sessionCountdown').textContent = '2:00:00';
+    document.getElementById('currentNum').textContent = '-';
+    
     document.getElementById('challenge-panel').innerHTML = `
       <div class="no-session">
-        <div class="icon">📋</div>
-        <p>No active challenge.<br>Start a session to begin!</p>
+        <div class="icon">🚀</div>
+        <h2>Ready to Practice?</h2>
+        <p>Start a 2-hour timed session.<br>Complete as many challenges as you can!</p>
       </div>
     `;
+    
+    document.getElementById('desktopFrame').src = 'about:blank';
   }
 }
 load();
+
+// Toggle sidebar
+document.getElementById('toggleBtn').onclick = () => {
+  const sidebar = document.getElementById('sidebar');
+  const btn = document.getElementById('toggleBtn');
+  sidebar.classList.toggle('collapsed');
+  btn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+  btn.style.left = sidebar.classList.contains('collapsed') ? '0' : '380px';
+};
 
 async function post(path) {
   const res = await fetch(path, {method:'POST'});
@@ -548,10 +485,11 @@ function showMsg(msg, isError=false) {
   const e = document.getElementById('errorMsg');
   if (isError) { e.textContent = msg; m.textContent = ''; }
   else { m.textContent = msg; e.textContent = ''; }
+  setTimeout(() => { m.textContent = ''; e.textContent = ''; }, 5000);
 }
 
 function setButtonsDisabled(disabled) {
-  ['startBtn', 'resetBtn', 'doneBtn', 'nextBtn', 'syncBtn'].forEach(id => {
+  ['startBtn', 'resetBtn', 'doneBtn', 'nextBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.disabled = disabled;
   });
@@ -560,7 +498,7 @@ function setButtonsDisabled(disabled) {
 let resetInProgress = false;
 
 document.getElementById('startBtn').onclick = async () => {
-  if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
+  if (resetInProgress) { showMsg('Please wait for reset...', true); return; }
   showMsg('Starting session...');
   try { 
     await post('api/start-session'); 
@@ -571,35 +509,29 @@ document.getElementById('startBtn').onclick = async () => {
 };
 
 document.getElementById('resetBtn').onclick = async () => {
-  if (!confirm('Reset the environment? This will delete and recreate clusters (~2 minutes).')) return;
+  if (!confirm('Reset environment? This deletes and recreates clusters (~2 min).')) return;
   
   resetInProgress = true;
   setButtonsDisabled(true);
   
-  const RESET_TIME = 120;
-  let remaining = RESET_TIME;
-  
+  let remaining = 120;
   const updateCountdown = () => {
     const mins = Math.floor(remaining / 60);
     const secs = remaining % 60;
-    showMsg(`🔄 Resetting environment... ${mins}:${secs.toString().padStart(2,'0')} remaining`);
+    showMsg(`🔄 Resetting... ${mins}:${secs.toString().padStart(2,'0')}`);
   };
   updateCountdown();
-  
-  const countdownInterval = setInterval(() => {
-    remaining--;
-    if (remaining >= 0) updateCountdown();
-  }, 1000);
+  const interval = setInterval(() => { remaining--; if (remaining >= 0) updateCountdown(); }, 1000);
   
   try {
     await post('api/reset');
-    clearInterval(countdownInterval);
-    showMsg('✓ Environment reset complete!');
+    clearInterval(interval);
+    showMsg('✓ Environment reset!');
     load();
   }
   catch(err) {
-    clearInterval(countdownInterval);
-    showMsg('Failed to reset: ' + err.message, true);
+    clearInterval(interval);
+    showMsg('Failed: ' + err.message, true);
   }
   finally {
     resetInProgress = false;
@@ -608,35 +540,25 @@ document.getElementById('resetBtn').onclick = async () => {
 };
 
 document.getElementById('doneBtn').onclick = async () => {
-  if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
-  showMsg('Grading challenge...');
+  if (resetInProgress) { showMsg('Please wait for reset...', true); return; }
+  showMsg('Grading...');
   try { 
-    const result = await post('api/done'); 
-    showMsg('✓ Challenge graded! Moving to next...'); 
+    await post('api/done'); 
+    showMsg('✓ Graded! Loading next...'); 
     setTimeout(load, 500);
   }
-  catch(err) { showMsg('Failed to grade: ' + err.message, true); }
+  catch(err) { showMsg('Failed: ' + err.message, true); }
 };
 
 document.getElementById('nextBtn').onclick = async () => {
-  if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
-  showMsg('Loading next challenge...');
+  if (resetInProgress) { showMsg('Please wait for reset...', true); return; }
+  showMsg('Loading next...');
   try { 
     await post('api/next-challenge'); 
     showMsg('✓ Next challenge loaded!'); 
     load(); 
   }
-  catch(err) { showMsg('Failed to load next: ' + err.message, true); }
-};
-
-document.getElementById('syncBtn').onclick = async () => {
-  if (resetInProgress) { showMsg('Please wait for reset to complete...', true); return; }
-  showMsg('Syncing scoreboard...');
-  try { 
-    await post('api/sync-scoreboard'); 
-    showMsg('✓ Scoreboard synced!'); 
-  }
-  catch(err) { showMsg('Failed to sync: ' + err.message, true); }
+  catch(err) { showMsg('Failed: ' + err.message, true); }
 };
 </script>
 </body>
