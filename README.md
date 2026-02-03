@@ -3,53 +3,99 @@
 Self-hosted CKA practice platform with kind-based multi-cluster, randomized challenges, automated grading, time limits, and a scoreboard.
 
 ## Features
-- Multiple kind clusters and merged kubeconfig with distinct contexts
-- Ready‑made baseline challenges (6) plus imported challenge specs (15) mapped to categories
-- Randomized target context per challenge with per‑challenge and session timers
-- Automated grading with a simple scoreboard (JSON + HTML)
-- Resettable environment via web controls or script
+- Multiple kind clusters (cka-a, cka-b, cka-c) with merged kubeconfig
+- 39 CKA-style challenges covering all exam domains
+- Randomized target context per challenge with per-challenge and session timers
+- Automated grading with scoreboard (JSON + HTML)
+- Web-based desktop and terminal access
+- Resettable environment via web controls or CLI
 
-## Prerequisites
-- Ubuntu 22.04 or 24.04 (recommended) with Bash. The installer will install Docker, kind, kubectl, Python 3, nginx, Squid, ttyd, and Helm.
+## Quick Install (Ubuntu 24.04)
 
-## Quickstart
 ```bash
-# 1) Install everything: web GUI (desktop + terminal + docs proxy) and clusters
-bash scripts/install.sh
+# Clone the repository
+git clone https://github.com/rp-elastx/cka-practice-rig.git
+cd cka-practice-rig
 
-# 2) Change passwords (recommended)
-# Web auth (nginx basic auth for /cka-training)
+# Run the installer (takes ~10-15 minutes)
+./install.sh
+```
+
+The installer will:
+1. Install all dependencies (Docker, kind, kubectl, helm, nginx, ttyd)
+2. Create sandbox user 'cka' for web terminal
+3. Create three kind clusters with storage provisioner
+4. Set up web GUI with self-signed SSL
+5. Start all services
+
+## Access (after install)
+
+| URL | Description |
+|-----|-------------|
+| `https://<ip>/cka-training/session.html` | Main session page |
+| `https://<ip>/cka-training/desktop/` | Web desktop (browser + terminal) |
+| `https://<ip>/cka-training/terminal/` | Web terminal only |
+| `https://<ip>/cka-training/scoreboard/` | Results scoreboard |
+
+**Credentials:** `cka` / `cka`
+
+> **Note:** Self-signed SSL certificate - browser will show security warning.
+
+## Change Passwords (Recommended)
+
+```bash
+# Web auth (nginx basic auth)
 sudo htpasswd /etc/nginx/htpasswd-cka cka
 sudo systemctl reload nginx
-# System user 'cka' (used by ttyd and services)
+
+# System user 'cka'
 sudo passwd cka
 ```
 
-During install, you can optionally enter a domain to enable HTTPS via certbot. If provided, the installer prints final access URLs with https.
+## Manual Setup (Advanced)
+
+If you prefer step-by-step control:
+
+```bash
+# 1. Install dependencies only
+bash scripts/install.sh --deps-only  # (or run individual sections)
+
+# 2. Create clusters
+bash scripts/setup.sh
+
+# 3. Set up web GUI
+bash scripts/webgui/setup-web.sh
+bash scripts/webgui/setup-selfsigned-ssl.sh
+bash scripts/webgui/setup-desktop.sh
+
+# 4. (Optional) Set up Let's Encrypt SSL with domain
+bash scripts/webgui/setup-ssl.sh your-domain.com
+```
+
+## Reset Environment
+
+```bash
+# Delete clusters and recreate fresh
+bash scripts/reset.sh
+bash scripts/setup.sh
+```
+
+## Challenge Categories
+
+| Category | Count | Topics |
+|----------|-------|--------|
+| Cluster Architecture | 4 | etcd backup, node drain, upgrade, static pods |
+| RBAC | 4 | Roles, ClusterRoles, ServiceAccounts |
+| Workloads | 8 | Deployments, rollouts, multi-container pods, resources |
+| Scheduling | 3 | Affinity, taints, tolerations |
+| Storage | 4 | PV, PVC, StorageClass, reclaim policies |
+| Networking | 5 | Services, DNS, NetworkPolicy, Ingress |
+| Troubleshooting | 6 | Logs, events, JSONPath, cluster issues |
+| Helm | 2 | Install, templating, custom values |
+| Gateway API | 2 | Migration, configuration |
 
 ## Notes
-- Use the printed context (`kubectl config current-context`) for each session.
-- Each challenge prints its namespace and description. Work only in that namespace unless stated otherwise.
-- Submissions after the time limit are marked but do not block grading.
-
-## Access
-- Desktop (docs-only): http(s)://<server-ip-or-domain>/cka-training/desktop
-- Terminal (ttyd): http(s)://<server-ip-or-domain>/cka-training/terminal
-- Live session page: http(s)://<server-ip-or-domain>/cka-training/session.html
-- Scoreboard: http(s)://<server-ip-or-domain>/cka-training/scoreboard/
-Auth: user `cka`, password `cka` (nginx basic auth; change after install).
-
-## Web GUI
-- Desktop environment with browser (via webtop) at `/cka-training/desktop`, locked to Kubernetes docs via local Squid proxy.
-- Separate web terminal (ttyd) at `/cka-training/terminal`.
-- Control API enables starting a session, grading (Done), moving to Next challenge, and reset actions via web.
-
-Start a timed multi‑challenge session from the session page; progress and timers update live. Results sync to the scoreboard automatically.
-
-## TLS and Domain
-The installer prompts for an optional domain and, if provided, configures HTTPS via certbot automatically. Ensure your DNS A/AAAA record points to the server and port 80 is reachable.
-
-You can also run manually:
-```bash
-bash scripts/webgui/setup-ssl.sh your.domain
-```
+- Each challenge specifies its target cluster and namespace
+- Work only in the specified namespace unless stated otherwise
+- Submissions after time limit are marked but grading continues
+- Use `kubectl config use-context` to switch between clusters
