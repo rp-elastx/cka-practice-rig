@@ -13,4 +13,5 @@ rm -f "$REPO_DIR"/kubeconfigs/*.yaml || true
 rm -f "$REPO_DIR"/scoreboard/current-session.json || true
 # Note: results.json is preserved to keep scoreboard history
 
-echo "[reset] Done. Run scripts/setup.sh to start fresh."
+echo "[reset] Recreating clusters..."
+exec "$REPO_DIR/scripts/setup.sh"
