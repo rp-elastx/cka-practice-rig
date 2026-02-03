@@ -10,12 +10,12 @@ set -euo pipefail
 #   ./install.sh
 #
 # This script will:
-#   1. Install all dependencies (Docker, kind, kubectl, helm, python3, nginx, ttyd)
-#   2. Create sandbox user 'cka' for the web terminal
+#   1. Install all dependencies (Docker, kind, kubectl, helm, python3, nginx)
+#   2. Create sandbox user 'cka'
 #   3. Create three kind clusters (cka-a, cka-b, cka-c) with storage provisioner
-#   4. Set up web GUI with nginx (scoreboard, terminal, desktop)
+#   4. Set up web GUI with nginx (scoreboard, desktop)
 #   5. Generate self-signed SSL certificate for HTTPS
-#   6. Start all services (ttyd, control API, desktop container)
+#   6. Start all services (control API, desktop container)
 #
 # After installation, access at: https://<server-ip>/cka-training (user: cka, pass: cka)
 ###############################################################################
@@ -151,19 +151,6 @@ install_helm() {
   log "Helm installed: $(helm version --short)"
 }
 
-install_ttyd() {
-  if command -v ttyd &>/dev/null; then
-    log "ttyd already installed"
-    return
-  fi
-
-  log "Installing ttyd..."
-  sudo apt-get install -y ttyd || {
-    warn "ttyd apt install failed, trying snap..."
-    sudo snap install ttyd --classic || error "Failed to install ttyd"
-  }
-}
-
 install_python_deps() {
   log "Installing Python dependencies..."
   # Use venv to avoid pip externally-managed-environment error on Ubuntu 24.04
@@ -226,9 +213,9 @@ create_clusters() {
 }
 
 setup_webgui() {
-  log "Setting up web GUI (nginx, ttyd, desktop)..."
+  log "Setting up web GUI (nginx, desktop)..."
   
-  # Setup web (nginx + ttyd service)
+  # Setup web (nginx config)
   bash "$REPO_DIR/scripts/webgui/setup-web.sh"
   
   # Setup self-signed SSL
@@ -273,7 +260,6 @@ restart_services() {
   log "Restarting services..."
   sudo systemctl daemon-reload
   sudo systemctl restart nginx || warn "nginx restart failed"
-  sudo systemctl restart ttyd@cka || warn "ttyd restart failed"
   sudo systemctl restart cka-control || warn "cka-control restart failed"
   sudo systemctl restart cka-scoreboard-sync.timer || warn "scoreboard sync timer restart failed"
 }
@@ -336,7 +322,6 @@ main() {
   install_kubectl
   install_kind
   install_helm
-  install_ttyd
   install_python_deps
   fix_hostname_resolution
   create_cka_user

@@ -8,31 +8,8 @@ BASE_PATH="/cka-training"
 SSL_CERT="/etc/ssl/certs/cka-practice-selfsigned.crt"
 SSL_KEY="/etc/ssl/private/cka-practice-selfsigned.key"
 
-# Systemd unit for ttyd (web terminal) running as 'cka'
-UNIT_PATH="/etc/systemd/system/ttyd@.service"
-if [ ! -f "$UNIT_PATH" ]; then
-  sudo tee "$UNIT_PATH" >/dev/null <<'EOF'
-[Unit]
-Description=ttyd web terminal for user %i
-After=network.target
-
-[Service]
-User=%i
-Group=%i
-WorkingDirectory=/home/%i
-ExecStart=/usr/bin/ttyd -p 7681 -t fontSize=14 bash -lc 'cd ~/cka-practice-rig && exec bash'
-Restart=always
-RestartSec=2
-
-[Install]
-WantedBy=multi-user.target
-EOF
-  sudo systemctl daemon-reload
-fi
-
-sudo systemctl enable --now ttyd@cka
-
-# Nginx: serve scoreboard and proxy desktop/terminal + API under base path
+# Nginx: serve scoreboard and proxy desktop + API under base path
+# Note: Terminal is available inside the desktop environment, no separate ttyd needed
 sudo mkdir -p "$WWW_DIR"
 sudo rsync -a "$SCORE_DIR/" "$WWW_DIR/scoreboard/"
 
@@ -61,7 +38,7 @@ server {
     auth_basic_user_file $HTPASSWD;
   }
 
-  # Web desktop (noVNC)
+  # Web desktop (webtop with browser + terminal)
   location $BASE_PATH/desktop/ {
     auth_basic "CKA Practice";
     auth_basic_user_file $HTPASSWD;
@@ -69,16 +46,6 @@ server {
     proxy_set_header Upgrade \$http_upgrade;
     proxy_set_header Connection "upgrade";
     proxy_pass http://127.0.0.1:3000/;
-  }
-
-  # Web terminal (ttyd)
-  location $BASE_PATH/terminal/ {
-    auth_basic "CKA Practice";
-    auth_basic_user_file $HTPASSWD;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade \$http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_pass http://127.0.0.1:7681/;
   }
 
   # Control API proxy

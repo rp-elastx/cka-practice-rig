@@ -7,7 +7,7 @@ Self-hosted CKA practice platform with kind-based multi-cluster, randomized chal
 - 39 CKA-style challenges covering all exam domains
 - Randomized target context per challenge with per-challenge and session timers
 - Automated grading with scoreboard (JSON + HTML)
-- Web-based desktop and terminal access
+- Web-based desktop with browser and terminal
 - Resettable environment via web controls or CLI
 
 ## Quick Install (Ubuntu 24.04)
@@ -22,11 +22,11 @@ cd cka-practice-rig
 ```
 
 The installer will:
-1. Install all dependencies (Docker, kind, kubectl, helm, nginx, ttyd)
-2. Create sandbox user 'cka' for web terminal
+1. Install all dependencies (Docker, kind, kubectl, helm, nginx)
+2. Create sandbox user 'cka'
 3. Create three kind clusters with storage provisioner
 4. Set up web GUI with self-signed SSL
-5. Start all services
+5. Start all services (web desktop, control API)
 
 ## Access (after install)
 
@@ -34,7 +34,6 @@ The installer will:
 |-----|-------------|
 | `https://<ip>/cka-training/session.html` | Main session page |
 | `https://<ip>/cka-training/desktop/` | Web desktop (browser + terminal) |
-| `https://<ip>/cka-training/terminal/` | Web terminal only |
 | `https://<ip>/cka-training/scoreboard/` | Results scoreboard |
 
 **Credentials:** `cka` / `cka`
