@@ -82,9 +82,10 @@ ctx=${contexts[$((RANDOM % ${#contexts[@]}))]}
 
 # Persist current challenge state
 start_ts=$(date -Iseconds)
+session_id=$(python3 -c "import json;print(json.load(open('$SESSION_META'))['sessionId'])")
 cat > "$SESSION_FILE" <<EOF
 {
-  "sessionId": $(python3 -c "import json;print(json.load(open('$SESSION_META'))['sessionId'])" | sed 's/^/"/;s/$/"/'),
+  "sessionId": "$session_id",
   "index": $new_idx,
   "total": $total,
   "challengeId": "$chal_id",

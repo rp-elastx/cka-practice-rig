@@ -47,12 +47,7 @@ server {
   server_name _;
 
   # Scoreboard static files under base path
-
-# If self-signed cert exists, append HTTPS listen and redirect lines after listen 80
-if [ -f "$SSL_CERT" ] && [ -f "$SSL_KEY" ]; then
-  sudo sed -i "/^  listen 80;/a \
   location $BASE_PATH/scoreboard/ {
-fi
     alias $WWW_DIR/scoreboard/;
     autoindex off;
     auth_basic "CKA Practice";

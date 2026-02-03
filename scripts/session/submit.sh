@@ -11,32 +11,16 @@ if [ ! -f "$SESSION_FILE" ]; then
   exit 1
 fi
 
-python3 - "$SESSION_FILE" <<'PY'
-import sys,json,datetime
-with open(sys.argv[1]) as f:
-    s=json.load(f)
-start=datetime.datetime.fromisoformat(s['start'])
-limit=s['timeLimitSeconds']
-now=datetime.datetime.now(datetime.timezone.utc).astimezone()
-elapsed=(now-start).total_seconds()
-print(int(elapsed))
-print(s['context'])
-print(s['gradeScript'])
-print(s['challengeId'])
-PY
-
+# Parse session metadata
 read -r elapsed ctx grader chal_id < <(python3 - "$SESSION_FILE" <<'PY'
 import sys,json,datetime
 with open(sys.argv[1]) as f:
     s=json.load(f)
 start=datetime.datetime.fromisoformat(s['start'])
-limit=s['timeLimitSeconds']
 now=datetime.datetime.now(datetime.timezone.utc).astimezone()
 elapsed=(now-start).total_seconds()
-print(int(elapsed))
-print(s['context'])
-print(s['gradeScript'])
-print(s['challengeId'])
+# Output space-separated for read
+print(int(elapsed), s['context'], s['gradeScript'], s['challengeId'])
 PY
 )
 
