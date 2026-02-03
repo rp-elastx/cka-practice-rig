@@ -1,33 +1,244 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CKA Practice Session</title>
 <style>
-body{font-family:system-ui,Arial,sans-serif;margin:2rem;}
-h1{margin-bottom:.5rem}
-.box{border:1px solid #ddd;padding:1rem;margin:.5rem 0;border-radius:6px}
-#countdown{font-size:1.5rem;color:#b00}
-label{display:inline-block;width:140px;color:#555}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  color: #fff;
+  padding: 2rem;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.header .logo { font-size: 2.5rem; }
+h1 {
+  font-size: 1.8rem;
+  font-weight: 300;
+}
+h1 span { font-weight: 700; color: #326ce5; }
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+.card-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  margin-bottom: 1rem;
+}
+.info-row {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+.info-label {
+  width: 140px;
+  color: #888;
+  flex-shrink: 0;
+}
+.info-value {
+  color: #fff;
+}
+.info-value b { color: #326ce5; }
+.description-box {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: #ccc;
+}
+.timer-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.timer {
+  flex: 1;
+  min-width: 200px;
+}
+.timer-label {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 0.25rem;
+}
+.timer-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'Monaco', 'Menlo', monospace;
+}
+.timer-value.warning { color: #f39c12; }
+.timer-value.danger { color: #e74c3c; }
+.timer-value.ok { color: #2ecc71; }
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #326ce5 0%, #1e4db7 100%);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(50, 108, 229, 0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(50, 108, 229, 0.4);
+}
+.btn-success {
+  background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%);
+  color: #fff;
+}
+.btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+}
+.btn-warning {
+  background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+  color: #fff;
+}
+.btn-warning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+}
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.btn-danger {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: #fff;
+}
+.btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+.link-btn {
+  color: #326ce5;
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+}
+.link-btn:hover { text-decoration: underline; }
+.divider {
+  color: #444;
+  margin: 0 0.25rem;
+}
+.message {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+.message.success {
+  background: rgba(39, 174, 96, 0.2);
+  border: 1px solid rgba(39, 174, 96, 0.3);
+  color: #2ecc71;
+}
+.message.error {
+  background: rgba(231, 76, 60, 0.2);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: #e74c3c;
+}
+.message:empty { display: none; }
+.no-session {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
+}
+.no-session .icon { font-size: 3rem; margin-bottom: 1rem; }
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #888;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.back-link:hover { color: #326ce5; }
 </style>
 </head>
 <body>
-<h1>Current Session</h1>
-<div id="info" class="box">Loading session...</div>
-<div class="box">
-  <div><label>Challenge time remaining:</label><span id="countdown">—</span></div>
-  <div><label>Session time remaining:</label><span id="sessionCountdown">—</span></div>
+<div class="container">
+  <a href="/" class="back-link">← Back to Home</a>
+  
+  <div class="header">
+    <div class="logo">☸️</div>
+    <h1>CKA <span>Practice</span> Session</h1>
   </div>
-<div class="box">
-  <button id="startBtn">Start New Session</button>
-  <button id="resetBtn">Reset Environment</button>
-  &nbsp;•&nbsp;
-  <a href="desktop/" target="_blank">Open Desktop</a>
-  &nbsp;•&nbsp;
-  <a href="scoreboard/index.html" target="_blank">Scoreboard</a>
-  <div id="actionMsg" style="margin-top:.5rem;color:#055"></div>
-  <div id="errorMsg" style="margin-top:.5rem;color:#b00"></div>
+
+  <div id="info" class="card">
+    <div class="no-session">
+      <div class="icon">📋</div>
+      <p>Loading session...</p>
+    </div>
   </div>
+
+  <div class="card">
+    <div class="card-title">⏱️ Time Remaining</div>
+    <div class="timer-row">
+      <div class="timer">
+        <div class="timer-label">Challenge</div>
+        <div class="timer-value ok" id="countdown">—</div>
+      </div>
+      <div class="timer">
+        <div class="timer-label">Session Total</div>
+        <div class="timer-value ok" id="sessionCountdown">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎮 Actions</div>
+    <div class="actions">
+      <button id="startBtn" class="btn btn-primary">▶ Start New Session</button>
+      <button id="doneBtn" class="btn btn-success">✓ Done (Grade)</button>
+      <button id="nextBtn" class="btn btn-warning">→ Next Challenge</button>
+      <button id="syncBtn" class="btn btn-secondary">↻ Sync Scoreboard</button>
+      <button id="resetBtn" class="btn btn-danger">⟲ Reset</button>
+      <span class="divider">|</span>
+      <a href="desktop/" target="_blank" class="link-btn">🖥️ Desktop</a>
+      <a href="scoreboard/index.html" target="_blank" class="link-btn">📊 Scoreboard</a>
+    </div>
+    <div id="actionMsg" class="message success"></div>
+    <div id="errorMsg" class="message error"></div>
+  </div>
+</div>
+
 <script>
 async function load() {
   try {
@@ -36,12 +247,14 @@ async function load() {
     const s = await r.json();
     const info = document.getElementById('info');
     info.innerHTML = `
-      <div><label>Challenge:</label><b>${s.challengeId}</b> — ${s.title}</div>
-      <div><label>Namespace:</label>${s.namespace}</div>
-      <div><label>Context:</label>${s.context}</div>
-      <div><label>Time limit:</label>${s.timeLimitSeconds} s</div>
-      <div><label>Progress:</label>${(s.index+1)||1} / ${s.total||1}</div>
-      <div class="box"><pre style="white-space:pre-wrap">${s.description||''}</pre></div>
+      <div class="card-title">📝 Current Challenge</div>
+      <div class="info-row"><span class="info-label">Challenge:</span><span class="info-value"><b>${s.challengeId}</b></span></div>
+      <div class="info-row"><span class="info-label">Title:</span><span class="info-value">${s.title}</span></div>
+      <div class="info-row"><span class="info-label">Namespace:</span><span class="info-value"><code>${s.namespace}</code></span></div>
+      <div class="info-row"><span class="info-label">Context:</span><span class="info-value"><code>${s.context}</code></span></div>
+      <div class="info-row"><span class="info-label">Time limit:</span><span class="info-value">${s.timeLimitSeconds} seconds</span></div>
+      <div class="info-row"><span class="info-label">Progress:</span><span class="info-value"><b>${(s.index+1)||1}</b> / ${s.total||1} challenges</span></div>
+      <div class="description-box">${s.description||'No description available.'}</div>
     `;
     const start = new Date(s.start).getTime();
     const limit = s.timeLimitSeconds*1000;
@@ -49,9 +262,12 @@ async function load() {
     function tick(){
       const now = Date.now();
       const left = start + limit - now;
-      if (left <= 0){ cd.textContent = 'Time exceeded'; return; }
+      if (left <= 0){ cd.textContent = '⚠️ Time exceeded'; cd.className='timer-value danger'; return; }
       const m = Math.floor(left/60000), sec = Math.floor((left%60000)/1000);
-      cd.textContent = `${m}m ${sec}s`;
+      cd.textContent = `${m}:${sec.toString().padStart(2,'0')}`;
+      if (left < 60000) { cd.className='timer-value danger'; }
+      else if (left < 180000) { cd.className='timer-value warning'; }
+      else { cd.className='timer-value ok'; }
       requestAnimationFrame(tick);
     }
     tick();
@@ -63,14 +279,22 @@ async function load() {
       if (!sStart || !sLimit){ sd.textContent='—'; return; }
       const now = Date.now();
       const left = sStart + sLimit - now;
-      if (left <= 0){ sd.textContent = 'Session time exceeded'; return; }
+      if (left <= 0){ sd.textContent = '⚠️ Session ended'; sd.className='timer-value danger'; return; }
       const m = Math.floor(left/60000), sec = Math.floor((left%60000)/1000);
-      sd.textContent = `${m}m ${sec}s`;
+      sd.textContent = `${m}:${sec.toString().padStart(2,'0')}`;
+      if (left < 300000) { sd.className='timer-value danger'; }
+      else if (left < 600000) { sd.className='timer-value warning'; }
+      else { sd.className='timer-value ok'; }
       requestAnimationFrame(stick);
     }
     stick();
   } catch(e) {
-    document.getElementById('info').textContent = 'No active session. Click "Start New Session" to begin.';
+    document.getElementById('info').innerHTML = `
+      <div class="no-session">
+        <div class="icon">🚀</div>
+        <p>No active session. Click <b>Start New Session</b> to begin your CKA practice!</p>
+      </div>
+    `;
   }
 }
 load();
@@ -81,44 +305,42 @@ async function post(path){
   return res.json();
 }
 
+function showMsg(msg, isError=false) {
+  const m = document.getElementById('actionMsg');
+  const e = document.getElementById('errorMsg');
+  if (isError) { e.textContent = msg; m.textContent = ''; }
+  else { m.textContent = msg; e.textContent = ''; }
+}
+
 document.getElementById('startBtn').onclick = async ()=>{
-  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Starting session...';e.textContent='';
-  try { await post('api/start-session'); m.textContent='Session started.'; load(); }
-  catch(err){ e.textContent='Failed to start session: '+err.message; m.textContent=''; }
+  showMsg('Starting session...');
+  try { await post('api/start-session'); showMsg('✓ Session started!'); load(); }
+  catch(err){ showMsg('Failed to start: '+err.message, true); }
 };
 
 document.getElementById('resetBtn').onclick = async ()=>{
-  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Resetting...';e.textContent='';
-  try { await post('api/reset'); m.textContent='Environment reset. Please wait a moment and refresh.'; }
-  catch(err){ e.textContent='Failed to reset: '+err.message; m.textContent=''; }
+  if (!confirm('Reset the environment? This will delete clusters and recreate them.')) return;
+  showMsg('Resetting environment...');
+  try { await post('api/reset'); showMsg('✓ Environment reset. Please wait a moment and refresh.'); }
+  catch(err){ showMsg('Failed to reset: '+err.message, true); }
 };
 
-// Done and Next buttons
-const doneBtn=document.createElement('button'); doneBtn.textContent='Done (Grade)';
-const nextBtn=document.createElement('button'); nextBtn.textContent='Next Challenge';
-const actions=document.querySelector('.box');
-actions.appendChild(doneBtn); actions.appendChild(nextBtn);
-
-doneBtn.onclick = async ()=>{
-  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Grading...';e.textContent='';
-  try { await post('api/done'); m.textContent='Graded current challenge.'; }
-  catch(err){ e.textContent='Failed to grade: '+err.message; m.textContent=''; }
+document.getElementById('doneBtn').onclick = async ()=>{
+  showMsg('Grading challenge...');
+  try { await post('api/done'); showMsg('✓ Challenge graded! Check scoreboard for results.'); }
+  catch(err){ showMsg('Failed to grade: '+err.message, true); }
 };
 
-nextBtn.onclick = async ()=>{
-  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Loading next challenge...';e.textContent='';
-  try { await post('api/next-challenge'); m.textContent='Next challenge loaded.'; load(); }
-  catch(err){ e.textContent='Failed to go next: '+err.message; m.textContent=''; }
+document.getElementById('nextBtn').onclick = async ()=>{
+  showMsg('Loading next challenge...');
+  try { await post('api/next-challenge'); showMsg('✓ Next challenge loaded!'); load(); }
+  catch(err){ showMsg('Failed to load next: '+err.message, true); }
 };
 
-// Sync Scoreboard button
-const syncBtn=document.createElement('button'); syncBtn.textContent='Sync Scoreboard';
-actions.appendChild(syncBtn);
-
-syncBtn.onclick = async ()=>{
-  const m=document.getElementById('actionMsg');const e=document.getElementById('errorMsg');m.textContent='Syncing scoreboard...';e.textContent='';
-  try { await post('api/sync-scoreboard'); m.textContent='Scoreboard synced. View it in the Scoreboard link.'; }
-  catch(err){ e.textContent='Failed to sync: '+err.message; m.textContent=''; }
+document.getElementById('syncBtn').onclick = async ()=>{
+  showMsg('Syncing scoreboard...');
+  try { await post('api/sync-scoreboard'); showMsg('✓ Scoreboard synced!'); }
+  catch(err){ showMsg('Failed to sync: '+err.message, true); }
 };
 </script>
 </body>
