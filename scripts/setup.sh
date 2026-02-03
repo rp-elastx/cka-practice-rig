@@ -54,4 +54,10 @@ done
 # Merge kubeconfigs
 bash "$REPO_DIR/scripts/merge-kubeconfigs.sh"
 
+# Restart desktop container if running (to pick up new kubeconfig)
+if docker ps --format '{{.Names}}' | grep -q '^webtop$'; then
+  echo "[+] Restarting desktop container to update kubeconfig..."
+  docker restart webtop || true
+fi
+
 echo "[+] Done. Use: export KUBECONFIG=$KUBECONFIG_DIR/merged.yaml && kubectl config get-contexts"
