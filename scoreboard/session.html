@@ -663,6 +663,50 @@ document.getElementById('newSessionBtn').onclick = async () => {
   }
   catch(err) { showMsg('Failed to start: ' + err.message, true); }
 };
+
+// Poll for broadcast messages (admin announcements/remote reset)
+let lastBroadcast = null;
+async function checkBroadcast() {
+  try {
+    const res = await fetch('api/status');
+    if (!res.ok) return;
+    const data = await res.json();
+    
+    if (data.broadcast && data.broadcast.message !== lastBroadcast) {
+      lastBroadcast = data.broadcast.message;
+      const overlay = document.getElementById('resetOverlay');
+      const statusEl = document.getElementById('resetStatus');
+      const substatusEl = document.getElementById('resetSubstatus');
+      const titleEl = overlay.querySelector('.reset-title');
+      
+      if (data.broadcast.type === 'reset') {
+        // Show reset overlay with big red text
+        titleEl.textContent = data.broadcast.message;
+        titleEl.style.color = '#e74c3c';
+        titleEl.style.fontSize = '2.5rem';
+        statusEl.textContent = 'Please wait...';
+        substatusEl.textContent = 'Environment is being reset by administrator';
+        overlay.classList.remove('hidden');
+        resetInProgress = true;
+        setButtonsDisabled(true);
+      }
+    } else if (!data.broadcast && lastBroadcast) {
+      // Broadcast cleared - hide overlay and reload
+      lastBroadcast = null;
+      const overlay = document.getElementById('resetOverlay');
+      overlay.classList.add('hidden');
+      // Reset title styling
+      const titleEl = overlay.querySelector('.reset-title');
+      titleEl.style.color = '#fff';
+      titleEl.style.fontSize = '1.5rem';
+      titleEl.textContent = 'Resetting Environment';
+      resetInProgress = false;
+      setButtonsDisabled(false);
+      load();
+    }
+  } catch(e) { /* ignore polling errors */ }
+}
+setInterval(checkBroadcast, 2000);
 </script>
 </body>
 </html>

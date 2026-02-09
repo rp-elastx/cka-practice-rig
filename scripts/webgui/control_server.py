@@ -7,6 +7,7 @@ REPO_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 KUBECONFIG_MERGED = os.path.join(REPO_DIR, 'kubeconfigs', 'merged.yaml')
 SCORE_DIR = os.path.join(REPO_DIR, 'scoreboard')
 SESSION_FILE = os.path.join(SCORE_DIR, 'current-session.json')
+BROADCAST_FILE = os.path.join(SCORE_DIR, 'broadcast.json')
 
 ENV = os.environ.copy()
 ENV['KUBECONFIG'] = KUBECONFIG_MERGED
@@ -25,6 +26,14 @@ def status():
     if os.path.exists(os.path.join(SCORE_DIR,'results.json')):
         with open(os.path.join(SCORE_DIR,'results.json')) as f:
             results = json.load(f)
+    # Check for broadcast message
+    broadcast = None
+    if os.path.exists(BROADCAST_FILE):
+        try:
+            with open(BROADCAST_FILE) as f:
+                broadcast = json.load(f)
+        except: pass
+    
     if cur:
         if meta:
             cur['sessionStart'] = meta.get('sessionStart')
@@ -37,8 +46,13 @@ def status():
             session_results = [r for r in results if r.get('sessionId') == session_id]
             cur['completed'] = len(session_results)
             cur['passed'] = len([r for r in session_results if r.get('pass')])
+        if broadcast:
+            cur['broadcast'] = broadcast
         return jsonify(cur)
-    return jsonify({"status":"idle"})
+    resp = {"status":"idle"}
+    if broadcast:
+        resp['broadcast'] = broadcast
+    return jsonify(resp)
 
 @app.post('/api/start-session')
 def start_session():
@@ -91,6 +105,24 @@ def sync_scoreboard():
         return jsonify({"status":"synced"})
     except subprocess.CalledProcessError as e:
         return jsonify({"error":"failed to sync","detail":str(e)}), 500
+
+@app.post('/api/broadcast')
+def broadcast():
+    """Set a broadcast message to display on all clients"""
+    data = request.get_json() or {}
+    msg = data.get('message', '')
+    msg_type = data.get('type', 'info')  # info, warning, error, reset
+    if msg:
+        with open(BROADCAST_FILE, 'w') as f:
+            json.dump({'message': msg, 'type': msg_type}, f)
+    return jsonify({"status": "broadcast set", "message": msg})
+
+@app.post('/api/clear-broadcast')
+def clear_broadcast():
+    """Clear the broadcast message"""
+    if os.path.exists(BROADCAST_FILE):
+        os.remove(BROADCAST_FILE)
+    return jsonify({"status": "cleared"})
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5005)
