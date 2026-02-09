@@ -85,6 +85,26 @@ docker exec webtop sh -c '
   done
 ' 2>/dev/null || echo "[desktop] Note: Could not clean up desktop apps (container may still be starting)"
 
+# Add terminal shortcut to desktop
+echo "[desktop] Adding terminal shortcut to desktop..."
+docker exec webtop sh -c '
+  mkdir -p /config/Desktop
+  cat > /config/Desktop/terminal.desktop << "DESKTOP"
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Terminal
+Comment=Open Terminal
+Exec=xfce4-terminal
+Icon=utilities-terminal
+Terminal=false
+Categories=System;TerminalEmulator;
+DESKTOP
+  chmod +x /config/Desktop/terminal.desktop
+  # Trust the desktop file (XFCE requirement)
+  mkdir -p /config/.config/xfce4/desktop
+' 2>/dev/null || echo "[desktop] Note: Could not add terminal shortcut"
+
 # Install bash-completion in container for kubectl
 echo "[desktop] Installing bash-completion in container..."
 docker exec webtop sh -c '
