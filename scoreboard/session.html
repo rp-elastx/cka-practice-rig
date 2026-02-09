@@ -239,9 +239,56 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 .back-link:hover { color: #326ce5; }
+.reset-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.reset-overlay.hidden { display: none; }
+.reset-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255,255,255,0.2);
+  border-top-color: #326ce5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1.5rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.reset-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+.reset-countdown {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: 'Monaco', 'Menlo', monospace;
+  color: #326ce5;
+  margin-bottom: 1rem;
+}
+.reset-status {
+  font-size: 0.9rem;
+  color: #888;
+}
 </style>
 </head>
 <body>
+<div id="resetOverlay" class="reset-overlay hidden">
+  <div class="reset-spinner"></div>
+  <div class="reset-title">Resetting Environment</div>
+  <div class="reset-countdown" id="resetCountdown">2:00</div>
+  <div class="reset-status">Recreating clusters, please wait...</div>
+</div>
 <div class="layout">
   <div class="sidebar" id="sidebar">
     <a href="/" class="back-link">← Back to Home</a>
@@ -457,8 +504,8 @@ async function load() {
     document.getElementById('doneBtn').style.display = 'none';
     document.getElementById('prevBtn').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'none';
-    document.getElementById('newSessionBtn').style.display = '';
-    document.getElementById('resetBtn').style.display = '';
+    document.getElementById('newSessionBtn').style.display = 'none';
+    document.getElementById('resetBtn').style.display = 'none';
     document.getElementById('sessionCountdown').textContent = '2:00:00';
     document.getElementById('currentNum').textContent = '-';
     
@@ -524,11 +571,16 @@ document.getElementById('resetBtn').onclick = async () => {
   resetInProgress = true;
   setButtonsDisabled(true);
   
+  // Show overlay
+  const overlay = document.getElementById('resetOverlay');
+  const countdownEl = document.getElementById('resetCountdown');
+  overlay.classList.remove('hidden');
+  
   let remaining = 120;
   const updateCountdown = () => {
     const mins = Math.floor(remaining / 60);
     const secs = remaining % 60;
-    showMsg(`🔄 Resetting... ${mins}:${secs.toString().padStart(2,'0')}`);
+    countdownEl.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
   };
   updateCountdown();
   const interval = setInterval(() => { remaining--; if (remaining >= 0) updateCountdown(); }, 1000);
@@ -536,11 +588,13 @@ document.getElementById('resetBtn').onclick = async () => {
   try {
     await post('api/reset');
     clearInterval(interval);
+    overlay.classList.add('hidden');
     showMsg('✓ Environment reset!');
     load();
   }
   catch(err) {
     clearInterval(interval);
+    overlay.classList.add('hidden');
     showMsg('Failed: ' + err.message, true);
   }
   finally {
