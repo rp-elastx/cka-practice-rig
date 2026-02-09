@@ -418,8 +418,15 @@ function copyToClipboard(url, btn) {
 }
 
 let sessionActive = false;
+let timerAnimationFrame = null;
 
 async function load() {
+  // Cancel any existing timer animation
+  if (timerAnimationFrame) {
+    cancelAnimationFrame(timerAnimationFrame);
+    timerAnimationFrame = null;
+  }
+  
   try {
     const r = await fetch('api/status?ts='+Date.now());
     if (!r.ok) throw new Error('No session');
@@ -493,7 +500,7 @@ async function load() {
       else if (left < 900000) { sd.className = 'timer-value warning'; }
       else { sd.className = 'timer-value ok'; }
       
-      requestAnimationFrame(sessionTick);
+      timerAnimationFrame = requestAnimationFrame(sessionTick);
     }
     sessionTick();
     
