@@ -210,7 +210,15 @@ fix_hostname_resolution() {
 
 create_clusters() {
   log "Creating kind clusters (cka-a, cka-b, cka-c)..."
-  bash "$REPO_DIR/scripts/setup.sh"
+  # Use sg to run with docker group active (handles fresh install where user just joined docker group)
+  if docker info &>/dev/null; then
+    # Docker already accessible
+    bash "$REPO_DIR/scripts/setup.sh"
+  else
+    # Need to activate docker group membership
+    log "Activating docker group for cluster creation..."
+    sg docker -c "bash \"$REPO_DIR/scripts/setup.sh\""
+  fi
 }
 
 setup_webgui() {
