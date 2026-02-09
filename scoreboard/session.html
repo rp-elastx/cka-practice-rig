@@ -378,6 +378,7 @@ async function load() {
     const r = await fetch('api/status?ts='+Date.now());
     if (!r.ok) throw new Error('No session');
     const s = await r.json();
+    if (s.status === 'idle') throw new Error('No active session');
     
     sessionActive = true;
     document.getElementById('startBtn').style.display = 'none';
