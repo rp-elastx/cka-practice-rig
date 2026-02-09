@@ -12,6 +12,15 @@ Self-hosted CKA practice platform with kind-based multi-cluster, randomized chal
 - Reset with visual progress overlay showing status messages
 - Resettable environment via web controls or CLI
 
+## Prerequisites
+
+- **Ubuntu 24.04** (or compatible Debian-based distro)
+- **sudo access** (installer uses sudo for package installation and system configuration)
+- **Git** (to clone the repository)
+- **Internet access** (downloads Docker, kubectl, kind, helm, container images)
+- **8GB+ RAM recommended** (runs 3 kind clusters + webtop container)
+- **20GB+ disk space** (container images, kind nodes)
+
 ## Quick Install (Ubuntu 24.04)
 
 ```bash
