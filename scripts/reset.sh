@@ -11,6 +11,7 @@ done
 echo "[reset] Cleaning kubeconfigs and current session (preserving scoreboard history)"
 rm -f "$REPO_DIR"/kubeconfigs/*.yaml || true
 rm -f "$REPO_DIR"/scoreboard/current-session.json || true
+rm -f "$REPO_DIR"/scoreboard/session.json || true
 # Note: results.json is preserved to keep scoreboard history
 
 echo "[reset] Recreating clusters..."
