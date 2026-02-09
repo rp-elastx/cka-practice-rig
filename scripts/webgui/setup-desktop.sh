@@ -129,8 +129,8 @@ export KUBECONFIG=/config/.kube/config
 BASHRC
 ' 2>/dev/null || echo "[desktop] Note: Could not configure bash in container"
 
-# Update nginx site to proxy /desktop (script will re-create and restart nginx)
-bash "$(dirname "$0")/setup-web.sh"
+# Note: nginx config for /desktop is already in setup-web.sh, no need to re-run here
+# (re-running would overwrite SSL settings added by setup-selfsigned-ssl.sh)
 
 BASE_PATH="/cka-training"
 echo "[desktop] Web desktop available at https://$HOST_IP$BASE_PATH/desktop/ (auth: cka/cka)"
