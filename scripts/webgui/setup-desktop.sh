@@ -108,7 +108,9 @@ DESKTOP
 # Install bash-completion in container for kubectl
 echo "[desktop] Installing bash-completion in container..."
 docker exec webtop sh -c '
-  apk add --no-cache bash-completion 2>/dev/null || true
+  # Temporarily unset proxy to access Alpine repos (squid only allows kubernetes.io)
+  unset HTTP_PROXY HTTPS_PROXY http_proxy https_proxy
+  apk update && apk add --no-cache bash-completion 2>/dev/null || true
   # Set up bashrc for abc user
   cat >> /config/.bashrc << "BASHRC"
 
