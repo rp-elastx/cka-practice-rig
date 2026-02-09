@@ -123,3 +123,80 @@ bash scripts/reset.sh
 - Work only in the specified namespace unless stated otherwise
 - Submissions after time limit are marked but grading continues
 - Use `kubectl config use-context` to switch between clusters
+
+## Admin API
+
+The control server exposes API endpoints for remote administration:
+
+### Broadcast Messages (Remote Reset Notification)
+
+Send a message to all connected clients with a full-screen overlay:
+
+```bash
+# Show "RESETTING ENVIRONMENT" in big red letters
+curl -X POST -H 'Content-Type: application/json' \
+  -d '{"message":"RESETTING ENVIRONMENT","type":"reset"}' \
+  http://localhost:5005/api/broadcast
+
+# Clear the broadcast (automatically refreshes client page)
+curl -X POST http://localhost:5005/api/clear-broadcast
+```
+
+Message types:
+- `reset` - Red overlay, locks screen (for maintenance)
+- `info` - Informational message
+- `warning` - Warning message
+- `error` - Error message
+
+### Remote Reset
+
+Trigger environment reset remotely (with notification):
+
+```bash
+# 1. Show overlay to all users
+curl -X POST -H 'Content-Type: application/json' \
+  -d '{"message":"RESETTING ENVIRONMENT","type":"reset"}' \
+  http://localhost:5005/api/broadcast
+
+# 2. Run reset
+curl -X POST http://localhost:5005/api/reset
+
+# 3. Clear overlay (page auto-reloads)
+curl -X POST http://localhost:5005/api/clear-broadcast
+```
+
+### API Reference
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/status` | GET | Get current session status |
+| `/api/start-session` | POST | Start a new practice session |
+| `/api/done` | POST | Grade current challenge |
+| `/api/next-challenge` | POST | Load next challenge |
+| `/api/prev-challenge` | POST | Load previous challenge |
+| `/api/reset` | POST | Reset all clusters (~3-4 min) |
+| `/api/broadcast` | POST | Set broadcast message |
+| `/api/clear-broadcast` | POST | Clear broadcast message |
+| `/api/sync-scoreboard` | POST | Sync scoreboard to nginx |
+
+## Troubleshooting
+
+### kubectl autocomplete not working
+The webtop container needs `bash-completion` installed. On fresh installs this is automatic, but if missing:
+```bash
+docker exec webtop sh -c 'unset HTTP_PROXY HTTPS_PROXY; apk add bash-completion'
+```
+
+### Docker permission denied
+If cluster creation fails with Docker socket permission error, the cka user needs docker group membership active:
+```bash
+sudo usermod -aG docker cka
+# Then re-run setup or reset
+```
+
+### SSL not working after install
+If HTTPS returns connection refused, re-run SSL setup:
+```bash
+bash scripts/webgui/setup-selfsigned-ssl.sh
+sudo systemctl reload nginx
+```
