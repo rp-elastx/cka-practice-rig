@@ -384,7 +384,7 @@ async function load() {
     document.getElementById('doneBtn').style.display = '';
     document.getElementById('prevBtn').style.display = '';
     document.getElementById('nextBtn').style.display = '';
-    document.getElementById('newSessionBtn').style.display = '';
+    document.getElementById('newSessionBtn').style.display = 'none';
     document.getElementById('resetBtn').style.display = '';
     
     // Disable prev button if at first challenge
@@ -456,8 +456,8 @@ async function load() {
     document.getElementById('doneBtn').style.display = 'none';
     document.getElementById('prevBtn').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'none';
-    document.getElementById('newSessionBtn').style.display = 'none';
-    document.getElementById('resetBtn').style.display = 'none';
+    document.getElementById('newSessionBtn').style.display = '';
+    document.getElementById('resetBtn').style.display = '';
     document.getElementById('sessionCountdown').textContent = '2:00:00';
     document.getElementById('currentNum').textContent = '-';
     
