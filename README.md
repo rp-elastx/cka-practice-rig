@@ -7,7 +7,9 @@ Self-hosted CKA practice platform with kind-based multi-cluster, randomized chal
 - 39 CKA-style challenges covering all exam domains
 - Randomized target context per challenge with per-challenge and session timers
 - Automated grading with scoreboard (JSON + HTML)
-- Web-based desktop with browser and terminal
+- Web-based desktop with browser and terminal (terminal shortcut on desktop)
+- Session controls: Grade, Previous, Next, New Session, Reset
+- Reset with visual progress overlay showing status messages
 - Resettable environment via web controls or CLI
 
 ## Quick Install (Ubuntu 24.04)
@@ -39,6 +41,17 @@ The installer will:
 **Credentials:** `cka` / `cka`
 
 > **Note:** Self-signed SSL certificate - browser will show security warning.
+
+## Session Controls
+
+| Button | Description |
+|--------|-------------|
+| **Start Session** | Begin a new 2-hour timed session with 10 random challenges |
+| **Grade** | Submit and grade the current challenge |
+| **Previous** | Go back to a previous challenge (disabled on first challenge) |
+| **Next** | Skip to the next challenge without grading |
+| **New Session** | Start a fresh session (only visible when no session active) |
+| **Reset** | Delete and recreate all clusters (~3-4 minutes) |
 
 For production use with a domain:
 ```bash
@@ -78,10 +91,17 @@ bash scripts/webgui/setup-ssl.sh your-domain.com
 
 ## Reset Environment
 
+### Via Web UI (Recommended)
+Click the **Reset** button in the session page. A progress overlay will show status:
+- Removing old clusters
+- Cleaning up configs
+- Creating clusters cka-a, cka-b, cka-c
+- Installing storage provisioner
+- Finalizing setup
+
+### Via CLI
 ```bash
-# Delete clusters and recreate fresh
 bash scripts/reset.sh
-bash scripts/setup.sh
 ```
 
 ## Challenge Categories
