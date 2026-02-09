@@ -269,15 +269,14 @@ body {
   color: #fff;
   margin-bottom: 0.5rem;
 }
-.reset-countdown {
-  font-size: 3rem;
-  font-weight: 700;
-  font-family: 'Monaco', 'Menlo', monospace;
-  color: #326ce5;
-  margin-bottom: 1rem;
-}
 .reset-status {
-  font-size: 0.9rem;
+  font-size: 1.2rem;
+  color: #326ce5;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+.reset-substatus {
+  font-size: 0.85rem;
   color: #888;
 }
 </style>
@@ -286,8 +285,8 @@ body {
 <div id="resetOverlay" class="reset-overlay hidden">
   <div class="reset-spinner"></div>
   <div class="reset-title">Resetting Environment</div>
-  <div class="reset-countdown" id="resetCountdown">2:00</div>
-  <div class="reset-status">Recreating clusters, please wait...</div>
+  <div class="reset-status" id="resetStatus">Preparing...</div>
+  <div class="reset-substatus" id="resetSubstatus">This may take 3-4 minutes</div>
 </div>
 <div class="layout">
   <div class="sidebar" id="sidebar">
@@ -573,35 +572,38 @@ document.getElementById('resetBtn').onclick = async () => {
   
   // Show overlay
   const overlay = document.getElementById('resetOverlay');
-  const countdownEl = document.getElementById('resetCountdown');
+  const statusEl = document.getElementById('resetStatus');
+  const substatusEl = document.getElementById('resetSubstatus');
   overlay.classList.remove('hidden');
   
-  let remaining = 120;
-  const updateCountdown = () => {
-    if (remaining <= 0) {
-      countdownEl.textContent = 'Still working...';
-      countdownEl.style.fontSize = '1.5rem';
-    } else {
-      const mins = Math.floor(remaining / 60);
-      const secs = remaining % 60;
-      countdownEl.textContent = `${mins}:${secs.toString().padStart(2,'0')}`;
-    }
-  };
-  updateCountdown();
-  const interval = setInterval(() => { remaining--; updateCountdown(); }, 1000);
+  // Simulated progress stages
+  const stages = [
+    { msg: 'Removing old clusters...', sub: 'Cleaning up cka-a, cka-b, cka-c', delay: 0 },
+    { msg: 'Cleaning up configs...', sub: 'Removing kubeconfigs and session data', delay: 15000 },
+    { msg: 'Creating cluster cka-a...', sub: 'This takes about 30-60 seconds', delay: 20000 },
+    { msg: 'Creating cluster cka-b...', sub: 'This takes about 30-60 seconds', delay: 70000 },
+    { msg: 'Creating cluster cka-c...', sub: 'This takes about 30-60 seconds', delay: 120000 },
+    { msg: 'Installing storage provisioner...', sub: 'Setting up local-path-provisioner', delay: 170000 },
+    { msg: 'Finalizing setup...', sub: 'Almost done!', delay: 200000 },
+  ];
+  
+  const timers = stages.map(stage => 
+    setTimeout(() => {
+      statusEl.textContent = stage.msg;
+      substatusEl.textContent = stage.sub;
+    }, stage.delay)
+  );
   
   try {
     await post('api/reset');
-    clearInterval(interval);
+    timers.forEach(t => clearTimeout(t));
     overlay.classList.add('hidden');
-    countdownEl.style.fontSize = '';
     showMsg('✓ Environment reset!');
     load();
   }
   catch(err) {
-    clearInterval(interval);
+    timers.forEach(t => clearTimeout(t));
     overlay.classList.add('hidden');
-    countdownEl.style.fontSize = '';
     showMsg('Failed: ' + err.message, true);
   }
   finally {
