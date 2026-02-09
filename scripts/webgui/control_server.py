@@ -75,6 +75,15 @@ def next_challenge():
     except subprocess.CalledProcessError as e:
         return jsonify({"error":"failed to load next","detail":str(e)}), 500
 
+@app.post('/api/prev-challenge')
+def prev_challenge():
+    try:
+        subprocess.check_call(['bash', os.path.join(REPO_DIR, 'scripts', 'session', 'prev.sh')], env=ENV)
+        with open(SESSION_FILE) as f:
+            return jsonify(json.load(f))
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error":"failed to load previous","detail":str(e)}), 500
+
 @app.post('/api/sync-scoreboard')
 def sync_scoreboard():
     try:

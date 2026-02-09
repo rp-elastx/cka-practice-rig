@@ -284,7 +284,9 @@ body {
     <div class="actions-bar" id="actions-bar">
       <button id="startBtn" class="btn btn-primary">▶ Start Session</button>
       <button id="doneBtn" class="btn btn-success" style="display:none;">✓ Grade</button>
+      <button id="prevBtn" class="btn btn-secondary" style="display:none;">← Previous</button>
       <button id="nextBtn" class="btn btn-warning" style="display:none;">→ Next</button>
+      <button id="newSessionBtn" class="btn btn-primary" style="display:none;">▶ New Session</button>
       <button id="resetBtn" class="btn btn-danger btn-sm" style="display:none;">⟲ Reset</button>
     </div>
   </div>
@@ -380,8 +382,13 @@ async function load() {
     sessionActive = true;
     document.getElementById('startBtn').style.display = 'none';
     document.getElementById('doneBtn').style.display = '';
+    document.getElementById('prevBtn').style.display = '';
     document.getElementById('nextBtn').style.display = '';
+    document.getElementById('newSessionBtn').style.display = '';
     document.getElementById('resetBtn').style.display = '';
+    
+    // Disable prev button if at first challenge
+    document.getElementById('prevBtn').disabled = (s.index || 0) <= 0;
     
     // Load desktop if not already loaded
     const frame = document.getElementById('desktopFrame');
@@ -447,7 +454,9 @@ async function load() {
     sessionActive = false;
     document.getElementById('startBtn').style.display = '';
     document.getElementById('doneBtn').style.display = 'none';
+    document.getElementById('prevBtn').style.display = 'none';
     document.getElementById('nextBtn').style.display = 'none';
+    document.getElementById('newSessionBtn').style.display = 'none';
     document.getElementById('resetBtn').style.display = 'none';
     document.getElementById('sessionCountdown').textContent = '2:00:00';
     document.getElementById('currentNum').textContent = '-';
@@ -489,7 +498,7 @@ function showMsg(msg, isError=false) {
 }
 
 function setButtonsDisabled(disabled) {
-  ['startBtn', 'resetBtn', 'doneBtn', 'nextBtn'].forEach(id => {
+  ['startBtn', 'resetBtn', 'doneBtn', 'nextBtn', 'prevBtn', 'newSessionBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.disabled = disabled;
   });
@@ -559,6 +568,29 @@ document.getElementById('nextBtn').onclick = async () => {
     load(); 
   }
   catch(err) { showMsg('Failed: ' + err.message, true); }
+};
+
+document.getElementById('prevBtn').onclick = async () => {
+  if (resetInProgress) { showMsg('Please wait for reset...', true); return; }
+  showMsg('Loading previous...');
+  try { 
+    await post('api/prev-challenge'); 
+    showMsg('✓ Previous challenge loaded!'); 
+    load(); 
+  }
+  catch(err) { showMsg('Failed: ' + err.message, true); }
+};
+
+document.getElementById('newSessionBtn').onclick = async () => {
+  if (resetInProgress) { showMsg('Please wait for reset...', true); return; }
+  if (!confirm('Start a new session? This will end your current session.')) return;
+  showMsg('Starting new session...');
+  try { 
+    await post('api/start-session'); 
+    showMsg('✓ New session started! Good luck!'); 
+    load(); 
+  }
+  catch(err) { showMsg('Failed to start: ' + err.message, true); }
 };
 </script>
 </body>
